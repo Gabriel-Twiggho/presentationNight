@@ -1,0 +1,75 @@
+{
+  "consolidation_date": "2025-11-13",
+  "ltm_end_date": "2025-09-30",
+  "consolidated_metrics": {
+    "full_company": {
+      "2023": {
+        "consolidated_outside_revenue": 374270000000,
+        "consolidated_ev": 4936100000000,
+        "ev_revenue_ratio": 13.19,
+        "revenue_growth_yoy": null,
+        "ev_growth_yoy": null
+      },
+      "2024": {
+        "consolidated_outside_revenue": 446370000000,
+        "consolidated_ev": 6018510000000,
+        "ev_revenue_ratio": 13.48,
+        "revenue_growth_yoy": 19.27,
+        "ev_growth_yoy": 21.93
+      },
+      "2025_ltm": {
+        "consolidated_outside_revenue": 510330000000,
+        "consolidated_ev": 7167500000000,
+        "ev_revenue_ratio": 14.04,
+        "revenue_growth_yoy": 14.33,
+        "ev_growth_yoy": 19.09
+      }
+    },
+    "ai_attributable": {
+      "2023": {
+        "consolidated_outside_revenue": 284270000000,
+        "consolidated_ev": 4936100000000,
+        "ev_revenue_ratio": 17.37,
+        "revenue_growth_yoy": null,
+        "ev_growth_yoy": null
+      },
+      "2024": {
+        "consolidated_outside_revenue": 356370000000,
+        "consolidated_ev": 6018510000000,
+        "ev_revenue_ratio": 16.88,
+        "revenue_growth_yoy": 25.37,
+        "ev_growth_yoy": 21.93
+      },
+      "2025_ltm": {
+        "consolidated_outside_revenue": 450330000000,
+        "consolidated_ev": 7167500000000,
+        "ev_revenue_ratio": 15.91,
+        "revenue_growth_yoy": 26.37,
+        "ev_growth_yoy": 19.09
+      }
+    }
+  },
+  "internal_revenue_removed": {
+    "2023": 2530000000,
+    "2024": 5900000000,
+    "2025_ltm": 9800000000
+  },
+  "companies_included": [
+    "Nvidia",
+    "Microsoft",
+    "Oracle",
+    "AMD",
+    "Intel",
+    "OpenAI",
+    "CoreWeave",
+    "Nebius",
+    "xAI",
+    "Figure AI",
+    "Mistral",
+    "Nscale",
+    "Anysphere",
+    "Ambience Healthcare",
+    "Harvey AI"
+  ]
+}
+

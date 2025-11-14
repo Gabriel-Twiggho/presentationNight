@@ -1,0 +1,17 @@
+source,target,value_2024,value_2025,flow_type
+External Customers,Microsoft,108800000000,122000000000,external_revenue
+External Customers,Nvidia,82800000000,94600000000,external_revenue
+External Customers,Intel,65400000000,73500000000,external_revenue
+External Customers,Oracle,47600000000,49500000000,external_revenue
+External Customers,AMD,21680000000,24680000000,external_revenue
+External Customers,OpenAI,2700000000,10000000000,external_revenue
+External Customers,CoreWeave,1310000000,2000000000,external_revenue
+External Customers,Other Private,300000000,1200000000,external_revenue
+OpenAI,Microsoft,1000000000,2000000000,internal_flow
+OpenAI,Oracle,500000000,1000000000,internal_flow
+OpenAI,CoreWeave,500000000,1500000000,internal_flow
+CoreWeave,Nvidia,800000000,1500000000,internal_flow
+Nebius,Nvidia,100000000,300000000,internal_flow
+Microsoft,Nvidia,2000000000,3000000000,internal_flow
+Oracle,Nvidia,1000000000,2000000000,internal_flow
+

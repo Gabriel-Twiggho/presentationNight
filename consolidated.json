@@ -1,0 +1,373 @@
+{
+  "metadata": {
+    "analysis_date": "2025-11-13",
+    "ltm_end_date": "2025-09-30",
+    "ltm_rationale": "Most recent Q3 2025 earnings available as of November 13, 2025",
+    "currency": "USD",
+    "fx_rate": "1.0 (all figures in USD)",
+    "bubble_definition": "Seed companies plus 1-degree relationships meeting materiality threshold (>=$500M annual value OR >=1% of revenue)",
+    "consolidation_method": "Sum of individual company EVs; internal revenue flows removed from consolidated revenue"
+  },
+  "consolidated_summary": {
+    "fy_2023": {
+      "full_company": {
+        "total_revenue": 368247000000,
+        "internal_revenue": 13300000000,
+        "consolidated_outside_revenue": 354950000000,
+        "consolidated_ev": 4166100000000,
+        "ev_revenue_ratio": 11.7,
+        "revenue_growth_yoy_pct": null,
+        "ev_growth_yoy_pct": null
+      },
+      "ai_attributable": {
+        "total_ai_revenue": 94500000000,
+        "internal_ai_revenue": 10800000000,
+        "consolidated_outside_ai_revenue": 83700000000,
+        "consolidated_ev": 4166100000000,
+        "ev_revenue_ratio": 49.8,
+        "revenue_growth_yoy_pct": null,
+        "ev_growth_yoy_pct": null
+      }
+    },
+    "fy_2024": {
+      "full_company": {
+        "total_revenue": 445197000000,
+        "internal_revenue": 20500000000,
+        "consolidated_outside_revenue": 424700000000,
+        "consolidated_ev": 6100565000000,
+        "ev_revenue_ratio": 14.4,
+        "revenue_growth_yoy_pct": 19.7,
+        "ev_growth_yoy_pct": 46.4
+      },
+      "ai_attributable": {
+        "total_ai_revenue": 139100000000,
+        "internal_ai_revenue": 16300000000,
+        "consolidated_outside_ai_revenue": 122800000000,
+        "consolidated_ev": 6100565000000,
+        "ev_revenue_ratio": 49.7,
+        "revenue_growth_yoy_pct": 46.7,
+        "ev_growth_yoy_pct": 46.4
+      }
+    },
+    "ltm_2025": {
+      "full_company": {
+        "total_revenue": 520584000000,
+        "internal_revenue": 31930000000,
+        "consolidated_outside_revenue": 488650000000,
+        "consolidated_ev": 8275010000000,
+        "ev_revenue_ratio": 16.9,
+        "revenue_growth_yoy_pct": 15.1,
+        "ev_growth_yoy_pct": 35.6
+      },
+      "ai_attributable": {
+        "total_ai_revenue": 201600000000,
+        "internal_ai_revenue": 31930000000,
+        "consolidated_outside_ai_revenue": 169670000000,
+        "consolidated_ev": 8275010000000,
+        "ev_revenue_ratio": 48.8,
+        "revenue_growth_yoy_pct": 38.2,
+        "ev_growth_yoy_pct": 35.6
+      }
+    }
+  },
+  "companies": [
+    {
+      "name": "Nvidia",
+      "type": "Public",
+      "hq": "Santa Clara, CA",
+      "revenue_2023": 26970000000,
+      "revenue_2024": 60922000000,
+      "revenue_2025_ltm": 90000000000,
+      "ai_revenue_2023": 22500000000,
+      "ai_revenue_2024": 55000000000,
+      "ai_revenue_2025_ltm": 82000000000,
+      "ev_2023": 1100000000000,
+      "ev_2024": 2200000000000,
+      "ev_2025_ltm": 3100000000000,
+      "confidence_score": 5,
+      "pct_of_2025_outside_revenue": 13.7,
+      "pct_of_2025_ev": 37.5
+    },
+    {
+      "name": "Microsoft",
+      "type": "Public",
+      "hq": "Redmond, WA",
+      "revenue_2023": 211915000000,
+      "revenue_2024": 245122000000,
+      "revenue_2025_ltm": 275000000000,
+      "ai_revenue_2023": 25000000000,
+      "ai_revenue_2024": 45000000000,
+      "ai_revenue_2025_ltm": 70000000000,
+      "ev_2023": 2400000000000,
+      "ev_2024": 3000000000000,
+      "ev_2025_ltm": 3850000000000,
+      "confidence_score": 5,
+      "pct_of_2025_outside_revenue": 55.9,
+      "pct_of_2025_ev": 46.5
+    },
+    {
+      "name": "Oracle",
+      "type": "Public",
+      "hq": "Austin, TX",
+      "revenue_2023": 49954000000,
+      "revenue_2024": 52961000000,
+      "revenue_2025_ltm": 56000000000,
+      "ai_revenue_2023": 8000000000,
+      "ai_revenue_2024": 12000000000,
+      "ai_revenue_2025_ltm": 16000000000,
+      "ev_2023": 280000000000,
+      "ev_2024": 350000000000,
+      "ev_2025_ltm": 420000000000,
+      "confidence_score": 4,
+      "pct_of_2025_outside_revenue": 10.6,
+      "pct_of_2025_ev": 5.1
+    },
+    {
+      "name": "AMD",
+      "type": "Public",
+      "hq": "Santa Clara, CA",
+      "revenue_2023": 22680000000,
+      "revenue_2024": 25823000000,
+      "revenue_2025_ltm": 29000000000,
+      "ai_revenue_2023": 4500000000,
+      "ai_revenue_2024": 8000000000,
+      "ai_revenue_2025_ltm": 12000000000,
+      "ev_2023": 180000000000,
+      "ev_2024": 240000000000,
+      "ev_2025_ltm": 290000000000,
+      "confidence_score": 4,
+      "pct_of_2025_outside_revenue": 5.5,
+      "pct_of_2025_ev": 3.5
+    },
+    {
+      "name": "Intel",
+      "type": "Public",
+      "hq": "Santa Clara, CA",
+      "revenue_2023": 54228000000,
+      "revenue_2024": 54949000000,
+      "revenue_2025_ltm": 54000000000,
+      "ai_revenue_2023": 3000000000,
+      "ai_revenue_2024": 4000000000,
+      "ai_revenue_2025_ltm": 5000000000,
+      "ev_2023": 160000000000,
+      "ev_2024": 150000000000,
+      "ev_2025_ltm": 145000000000,
+      "confidence_score": 4,
+      "pct_of_2025_outside_revenue": 10.1,
+      "pct_of_2025_ev": 1.8
+    },
+    {
+      "name": "OpenAI",
+      "type": "Private",
+      "hq": "San Francisco, CA",
+      "revenue_2023": 1600000000,
+      "revenue_2024": 3700000000,
+      "revenue_2025_ltm": 12000000000,
+      "ai_revenue_2023": 1600000000,
+      "ai_revenue_2024": 3700000000,
+      "ai_revenue_2025_ltm": 12000000000,
+      "ev_2023": 29000000000,
+      "ev_2024": 80000000000,
+      "ev_2025_ltm": 300000000000,
+      "confidence_score": 3,
+      "pct_of_2025_outside_revenue": 2.4,
+      "pct_of_2025_ev": 3.6
+    },
+    {
+      "name": "CoreWeave",
+      "type": "Private",
+      "hq": "Roseland, NJ",
+      "revenue_2023": 500000000,
+      "revenue_2024": 1500000000,
+      "revenue_2025_ltm": 3000000000,
+      "ai_revenue_2023": 500000000,
+      "ai_revenue_2024": 1500000000,
+      "ai_revenue_2025_ltm": 3000000000,
+      "ev_2023": 8000000000,
+      "ev_2024": 30000000000,
+      "ev_2025_ltm": 70000000000,
+      "confidence_score": 2,
+      "pct_of_2025_outside_revenue": 0.6,
+      "pct_of_2025_ev": 0.8
+    },
+    {
+      "name": "Nebius",
+      "type": "Public",
+      "hq": "Amsterdam, Netherlands",
+      "revenue_2023": 180000000,
+      "revenue_2024": 400000000,
+      "revenue_2025_ltm": 584000000,
+      "ai_revenue_2023": 180000000,
+      "ai_revenue_2024": 400000000,
+      "ai_revenue_2025_ltm": 584000000,
+      "ev_2023": 2500000000,
+      "ev_2024": 15300000000,
+      "ev_2025_ltm": 27610000000,
+      "confidence_score": 4,
+      "pct_of_2025_outside_revenue": 0.1,
+      "pct_of_2025_ev": 0.3
+    },
+    {
+      "name": "xAI",
+      "type": "Private",
+      "hq": "San Francisco, CA",
+      "revenue_2023": 50000000,
+      "revenue_2024": 200000000,
+      "revenue_2025_ltm": 800000000,
+      "ai_revenue_2023": 50000000,
+      "ai_revenue_2024": 200000000,
+      "ai_revenue_2025_ltm": 800000000,
+      "ev_2023": 5000000000,
+      "ev_2024": 24000000000,
+      "ev_2025_ltm": 50000000000,
+      "confidence_score": 2,
+      "pct_of_2025_outside_revenue": 0.2,
+      "pct_of_2025_ev": 0.6
+    },
+    {
+      "name": "Figure AI",
+      "type": "Private",
+      "hq": "Sunnyvale, CA",
+      "revenue_2023": 10000000,
+      "revenue_2024": 50000000,
+      "revenue_2025_ltm": 150000000,
+      "ai_revenue_2023": 10000000,
+      "ai_revenue_2024": 50000000,
+      "ai_revenue_2025_ltm": 150000000,
+      "ev_2023": 500000000,
+      "ev_2024": 2600000000,
+      "ev_2025_ltm": 3500000000,
+      "confidence_score": 2,
+      "pct_of_2025_outside_revenue": 0.0,
+      "pct_of_2025_ev": 0.0
+    },
+    {
+      "name": "Mistral",
+      "type": "Private",
+      "hq": "Paris, France",
+      "revenue_2023": 30000000,
+      "revenue_2024": 120000000,
+      "revenue_2025_ltm": 300000000,
+      "ai_revenue_2023": 30000000,
+      "ai_revenue_2024": 120000000,
+      "ai_revenue_2025_ltm": 300000000,
+      "ev_2023": 500000000,
+      "ev_2024": 2000000000,
+      "ev_2025_ltm": 6000000000,
+      "confidence_score": 3,
+      "pct_of_2025_outside_revenue": 0.1,
+      "pct_of_2025_ev": 0.1
+    },
+    {
+      "name": "Nscale",
+      "type": "Private",
+      "hq": "Unknown",
+      "revenue_2023": 5000000,
+      "revenue_2024": 20000000,
+      "revenue_2025_ltm": 50000000,
+      "ai_revenue_2023": 5000000,
+      "ai_revenue_2024": 20000000,
+      "ai_revenue_2025_ltm": 50000000,
+      "ev_2023": 100000000,
+      "ev_2024": 300000000,
+      "ev_2025_ltm": 500000000,
+      "confidence_score": 1,
+      "pct_of_2025_outside_revenue": 0.0,
+      "pct_of_2025_ev": 0.0
+    },
+    {
+      "name": "Anysphere",
+      "type": "Private",
+      "hq": "San Francisco, CA",
+      "revenue_2023": 100000000,
+      "revenue_2024": 300000000,
+      "revenue_2025_ltm": 500000000,
+      "ai_revenue_2023": 100000000,
+      "ai_revenue_2024": 300000000,
+      "ai_revenue_2025_ltm": 500000000,
+      "ev_2023": 1000000000,
+      "ev_2024": 5000000000,
+      "ev_2025_ltm": 9900000000,
+      "confidence_score": 3,
+      "pct_of_2025_outside_revenue": 0.1,
+      "pct_of_2025_ev": 0.1
+    },
+    {
+      "name": "Ambience Healthcare",
+      "type": "Private",
+      "hq": "San Francisco, CA",
+      "revenue_2023": 10000000,
+      "revenue_2024": 30000000,
+      "revenue_2025_ltm": 80000000,
+      "ai_revenue_2023": 10000000,
+      "ai_revenue_2024": 30000000,
+      "ai_revenue_2025_ltm": 80000000,
+      "ev_2023": 200000000,
+      "ev_2024": 650000000,
+      "ev_2025_ltm": 1000000000,
+      "confidence_score": 2,
+      "pct_of_2025_outside_revenue": 0.0,
+      "pct_of_2025_ev": 0.0
+    },
+    {
+      "name": "Harvey AI",
+      "type": "Private",
+      "hq": "San Francisco, CA",
+      "revenue_2023": 15000000,
+      "revenue_2024": 50000000,
+      "revenue_2025_ltm": 120000000,
+      "ai_revenue_2023": 15000000,
+      "ai_revenue_2024": 50000000,
+      "ai_revenue_2025_ltm": 120000000,
+      "ev_2023": 300000000,
+      "ev_2024": 715000000,
+      "ev_2025_ltm": 1500000000,
+      "confidence_score": 2,
+      "pct_of_2025_outside_revenue": 0.0,
+      "pct_of_2025_ev": 0.0
+    }
+  ],
+  "key_relationships": [
+    {
+      "source": "Microsoft",
+      "target": "Nebius",
+      "type": "Cloud Infrastructure Contract",
+      "annual_value": 3480000000,
+      "total_commitment": 17400000000,
+      "duration_years": 5
+    },
+    {
+      "source": "Microsoft",
+      "target": "OpenAI",
+      "type": "Strategic Investment & Cloud",
+      "investment_total": 13000000000,
+      "annual_cloud_value": 1000000000
+    },
+    {
+      "source": "OpenAI",
+      "target": "CoreWeave",
+      "type": "Cloud Infrastructure Contract",
+      "total_commitment": 22400000000
+    },
+    {
+      "source": "Nvidia",
+      "target": "OpenAI",
+      "type": "Chip Supply & Investment",
+      "planned_commitment": 100000000000
+    }
+  ],
+  "uncertainty_flags": {
+    "high_uncertainty_items": [
+      "Private company revenues (8 companies with confidence score <3)",
+      "Inter-company revenue estimates (confidence 2-4/5)",
+      "OpenAI revenue ($10-14B range for 2025)",
+      "CoreWeave revenue ($2-4B range for 2025)",
+      "xAI revenue ($500M-1B range for 2025)"
+    ],
+    "items_driving_over_5pct_of_total": [
+      "OpenAI valuation: $300B (3.6% of consolidated EV)",
+      "CoreWeave valuation: $70B (0.8% of consolidated EV)"
+    ]
+  }
+}
+

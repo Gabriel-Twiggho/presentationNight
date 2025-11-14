@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Bubble Financial Analysis</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-bg: #000000;
+            --secondary-bg: #1d1d1f;
+            --card-bg: #2c2c2e;
+            --text-primary: #f5f5f7;
+            --text-secondary: #a1a1a6;
+            --accent-blue: #0071e3;
+            --accent-green: #30d158;
+            --accent-red: #ff453a;
+            --accent-orange: #ff9f0a;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--primary-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(29, 29, 31, 0.8);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        nav .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav .logo {
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: opacity 0.3s;
+        }
+
+        nav a:hover {
+            opacity: 0.7;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 6rem 2rem 4rem;
+            background: linear-gradient(180deg, #000 0%, #1d1d1f 100%);
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            letter-spacing: -2px;
+            background: linear-gradient(135deg, #f5f5f7 0%, #a1a1a6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero .subtitle {
+            font-size: clamp(1.25rem, 3vw, 1.75rem);
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            font-weight: 400;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: 18px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--accent-blue) 0%, #00a8e8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-change {
+            margin-top: 1rem;
+            font-size: 0.875rem;
+        }
+
+        .positive {
+            color: var(--accent-green);
+        }
+
+        .negative {
+            color: var(--accent-red);
+        }
+
+        .warning {
+            color: var(--accent-orange);
+        }
+
+        /* Section Styling */
+        section {
+            padding: 6rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        section h2 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            margin-bottom: 1rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        section h3 {
+            font-size: 1.75rem;
+            margin: 2rem 0 1rem;
+            font-weight: 600;
+        }
+
+        section p {
+            color: var(--text-secondary);
+            font-size: 1.125rem;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Table Styling */
+        .table-container {
+            overflow-x: auto;
+            background: var(--card-bg);
+            border-radius: 18px;
+            padding: 2rem;
+            margin: 2rem 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 1rem;
+            background: rgba(0, 113, 227, 0.1);
+            color: var(--accent-blue);
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.95rem;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* Card Grid */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .insight-card {
+            background: var(--card-bg);
+            border-radius: 18px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+        }
+
+        .insight-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            border-color: rgba(0, 113, 227, 0.3);
+        }
+
+        .insight-card h4 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: var(--accent-blue);
+        }
+
+        .insight-card p {
+            font-size: 1rem;
+            margin-bottom: 0;
+        }
+
+        /* Alert Box */
+        .alert {
+            background: rgba(255, 69, 58, 0.1);
+            border-left: 4px solid var(--accent-red);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 2rem 0;
+        }
+
+        .alert.warning {
+            background: rgba(255, 159, 10, 0.1);
+            border-left-color: var(--accent-orange);
+        }
+
+        .alert.info {
+            background: rgba(0, 113, 227, 0.1);
+            border-left-color: var(--accent-blue);
+        }
+
+        .alert.success {
+            background: rgba(48, 209, 88, 0.1);
+            border-left-color: var(--accent-green);
+        }
+
+        /* Companies Section */
+        .company-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .company-tag {
+            background: var(--card-bg);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+        }
+
+        .company-tag:hover {
+            background: rgba(0, 113, 227, 0.2);
+            border-color: var(--accent-blue);
+        }
+
+        .company-tag.public {
+            border-left: 3px solid var(--accent-green);
+        }
+
+        .company-tag.private {
+            border-left: 3px solid var(--accent-orange);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--secondary-bg);
+            padding: 3rem 2rem;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        footer p {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--primary-bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--card-bg);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3a3a3c;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav ul {
+                display: none;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            section {
+                padding: 3rem 1rem;
+            }
+        }
+
+        /* Smooth Scroll */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Fade-in Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        /* Highlight */
+        .highlight {
+            color: var(--accent-blue);
+            font-weight: 600;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        .badge.high {
+            background: rgba(255, 69, 58, 0.2);
+            color: var(--accent-red);
+        }
+
+        .badge.medium {
+            background: rgba(255, 159, 10, 0.2);
+            color: var(--accent-orange);
+        }
+
+        .badge.low {
+            background: rgba(48, 209, 88, 0.2);
+            color: var(--accent-green);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <div class="logo">AI Bubble Analysis</div>
+            <ul>
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="#findings">Findings</a></li>
+                <li><a href="#data">Data</a></li>
+                <li><a href="#sensitivity">Sensitivity</a></li>
+                <li><a href="#companies">Companies</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div>
+            <h1 class="fade-in">AI Bubble Financial Analysis</h1>
+            <p class="subtitle fade-in">Comprehensive analysis of 15 AI companies • 2023-2025 LTM</p>
+            
+            <div class="stats-grid fade-in">
+                <div class="stat-card">
+                    <div class="stat-number">$488.7B</div>
+                    <div class="stat-label">Consolidated Revenue</div>
+                    <div class="stat-change positive">↑ 37.7% since 2023</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">$8.28T</div>
+                    <div class="stat-label">Enterprise Value</div>
+                    <div class="stat-change positive">↑ 98.6% since 2023</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">16.9x</div>
+                    <div class="stat-label">EV/Revenue Multiple</div>
+                    <div class="stat-change warning">↑ 44% expansion</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">35.6%</div>
+                    <div class="stat-label">EV CAGR</div>
+                    <div class="stat-change negative">2x faster than revenue</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Executive Summary -->
+    <section id="overview">
+        <h2>Executive Summary</h2>
+        <p>This analysis treats the AI ecosystem as a consolidated entity, aggregating 15 seed companies with their material relationships. We calculated consolidated outside revenue and enterprise value for fiscal years 2023, 2024, and the latest twelve months (LTM) ending September 30, 2025, removing inter-company transactions to avoid double-counting.</p>
+
+        <div class="alert warning">
+            <h4 style="color: var(--accent-orange); margin-bottom: 0.5rem;">⚠️ Key Finding</h4>
+            <p style="margin-bottom: 0;"><strong>Valuation is growing ~2x faster than revenue.</strong> Enterprise value grew 35.6% annually while revenue grew 17.3% annually, indicating substantial multiple expansion that may not be sustainable if growth slows.</p>
+        </div>
+
+        <h3>Consolidated Financial Performance</h3>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Year</th>
+                        <th>Outside Revenue</th>
+                        <th>Enterprise Value</th>
+                        <th>EV/Revenue</th>
+                        <th>Revenue Growth</th>
+                        <th>EV Growth</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>2023 (FY)</strong></td>
+                        <td>$354.95B</td>
+                        <td>$4,166.1B</td>
+                        <td>11.7x</td>
+                        <td>—</td>
+                        <td>—</td>
+                    </tr>
+                    <tr>
+                        <td><strong>2024 (FY)</strong></td>
+                        <td>$424.70B</td>
+                        <td>$6,100.6B</td>
+                        <td>14.4x</td>
+                        <td><span class="positive">+19.7%</span></td>
+                        <td><span class="positive">+46.4%</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>2025 LTM</strong></td>
+                        <td>$488.65B</td>
+                        <td>$8,275.0B</td>
+                        <td>16.9x</td>
+                        <td><span class="positive">+15.1%</span></td>
+                        <td><span class="positive">+35.6%</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3>AI-Attributable Revenue</h3>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Year</th>
+                        <th>AI Revenue</th>
+                        <th>EV/AI Revenue</th>
+                        <th>AI Growth YoY</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>2023 (FY)</strong></td>
+                        <td>$83.70B</td>
+                        <td>49.8x</td>
+                        <td>—</td>
+                    </tr>
+                    <tr>
+                        <td><strong>2024 (FY)</strong></td>
+                        <td>$122.80B</td>
+                        <td>49.7x</td>
+                        <td><span class="positive">+46.7%</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>2025 LTM</strong></td>
+                        <td>$169.67B</td>
+                        <td>48.8x</td>
+                        <td><span class="warning">+38.2%</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="alert info">
+            <p style="margin-bottom: 0;"><strong>AI revenue growing 38% YoY</strong> but decelerating from 47% in 2024. The 48.8x AI-only multiple assumes sustained hyper-growth for 5+ years.</p>
+        </div>
+    </section>
+
+    <!-- Key Findings -->
+    <section id="findings">
+        <h2>Key Findings</h2>
+        
+        <div class="card-grid">
+            <div class="insight-card">
+                <h4>🎯 Multiple Expansion Risk</h4>
+                <p>EV/Revenue expanded from 11.7x to 16.9x (+44%). Market anticipates sustained high growth, but creates downside risk if growth normalizes to 10-15%.</p>
+            </div>
+            
+            <div class="insight-card">
+                <h4>⚡ Concentration Risk</h4>
+                <p>Microsoft (46.5% of EV) + Nvidia (37.5% of EV) = <span class="highlight">84% of total value</span>. Highly vulnerable to public tech correction.</p>
+            </div>
+            
+            <div class="insight-card">
+                <h4>📉 Decelerating Growth</h4>
+                <p>AI revenue growth slowing: 46.7% (2024) → 38.2% (2025). Still strong, but trend indicates maturing market dynamics.</p>
+            </div>
+            
+            <div class="insight-card">
+                <h4>🔄 Internal Dependencies</h4>
+                <p><span class="highlight">$31.93B</span> of internal revenue flows create circular dependencies where Microsoft funds OpenAI → OpenAI pays Microsoft Azure.</p>
+            </div>
+            
+            <div class="insight-card">
+                <h4>💰 Private Valuations Immaterial</h4>
+                <p>OpenAI, CoreWeave, xAI = only 8% of consolidated EV. A 40% correction in private valuations impacts consolidated EV by just 2.1%.</p>
+            </div>
+            
+            <div class="insight-card">
+                <h4>🎲 Public Tech Drives Risk</h4>
+                <p>A 20% selloff in Nvidia/Microsoft/Oracle/AMD would slash consolidated EV by <span class="highlight">18.5%</span>. Private AI froth is noise.</p>
+            </div>
+        </div>
+
+        <h3>Valuation Assessment</h3>
+        <div class="alert warning">
+            <h4 style="color: var(--accent-orange); margin-bottom: 0.5rem;">The bubble appears overvalued relative to current revenue</h4>
+            <p>While the 16.9x EV/Revenue multiple aligns with Big Tech comparables, it masks three risks:</p>
+            <ul style="margin: 1rem 0 0 1.5rem; color: var(--text-secondary);">
+                <li>AI revenue growth is decelerating (47% → 38%)</li>
+                <li>The AI-only multiple of 48.8x assumes sustained hyper-growth</li>
+                <li>Nvidia's 34.4x multiple implies perpetual GPU dominance despite rising competition</li>
+            </ul>
+        </div>
+
+        <h3>Top Contributors (2025 LTM)</h3>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Company</th>
+                        <th>Outside Revenue</th>
+                        <th>% of Total</th>
+                        <th>Enterprise Value</th>
+                        <th>% of EV</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Microsoft</strong></td>
+                        <td>$273.25B</td>
+                        <td class="positive">55.9%</td>
+                        <td>$3,850.0B</td>
+                        <td class="positive">46.5%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Nvidia</strong></td>
+                        <td>$67.07B</td>
+                        <td>13.7%</td>
+                        <td>$3,100.0B</td>
+                        <td class="positive">37.5%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Oracle</strong></td>
+                        <td>$52.00B</td>
+                        <td>10.6%</td>
+                        <td>$420.0B</td>
+                        <td>5.1%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Intel</strong></td>
+                        <td>$49.50B</td>
+                        <td>10.1%</td>
+                        <td>$145.0B</td>
+                        <td>1.8%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>AMD</strong></td>
+                        <td>$26.75B</td>
+                        <td>5.5%</td>
+                        <td>$290.0B</td>
+                        <td>3.5%</td>
+                    </tr>
+                    <tr>
+                        <td><strong>OpenAI</strong> <span class="badge medium">Private</span></td>
+                        <td>$11.97B</td>
+                        <td>2.4%</td>
+                        <td>$300.0B</td>
+                        <td>3.6%</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Sensitivity Analysis -->
+    <section id="sensitivity">
+        <h2>Sensitivity Analysis</h2>
+        <p>We tested the impact of ±20% changes on the top 5 uncertain items to assess the robustness of our consolidated figures.</p>
+
+        <h3>Top 5 Uncertain Items</h3>
+        <div class="card-grid">
+            <div class="insight-card">
+                <h4>OpenAI Revenue <span class="badge medium">Confidence: 3/5</span></h4>
+                <p><strong>Base:</strong> $12B<br>
+                <strong>Range:</strong> $10-14B<br>
+                Limited public disclosure; annualized estimate from July 2025.</p>
+            </div>
+            
+            <div class="insight-card">
+                <h4>OpenAI Valuation <span class="badge medium">Confidence: 3/5</span></h4>
+                <p><strong>Base:</strong> $300B<br>
+                <strong>Range:</strong> $250-350B<br>
+                April 2025 funding round; secondary market may differ.</p>
+            </div>
+            
+            <div class="insight-card">
+                <h4>CoreWeave Revenue <span class="badge high">Confidence: 2/5</span></h4>
+                <p><strong>Base:</strong> $3B<br>
+                <strong>Range:</strong> $2-4B<br>
+                Private company; estimate based on OpenAI contract.</p>
+            </div>
+            
+            <div class="insight-card">
+                <h4>CoreWeave Valuation <span class="badge high">Confidence: 2/5</span></h4>
+                <p><strong>Base:</strong> $70B<br>
+                <strong>Range:</strong> $55-85B<br>
+                Pre-IPO valuation from Oct 2025 reports.</p>
+            </div>
+            
+            <div class="insight-card">
+                <h4>Internal Chip Sales <span class="badge medium">Confidence: 3/5</span></h4>
+                <p><strong>Base:</strong> $22.4B<br>
+                <strong>Range:</strong> $18-27B<br>
+                Nvidia sales to bubble companies; estimated from capex.</p>
+            </div>
+        </div>
+
+        <h3>Scenario Analysis</h3>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Scenario</th>
+                        <th>EV Impact</th>
+                        <th>EV/Revenue</th>
+                        <th>Interpretation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Top-5 at -20%</td>
+                        <td><span class="negative">-$74B (-0.9%)</span></td>
+                        <td>16.7x</td>
+                        <td>Minimal impact; analysis robust</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Base Case</strong></td>
+                        <td>—</td>
+                        <td><strong>16.9x</strong></td>
+                        <td>—</td>
+                    </tr>
+                    <tr>
+                        <td>Top-5 at +20%</td>
+                        <td><span class="positive">+$74B (+0.9%)</span></td>
+                        <td>17.1x</td>
+                        <td>Minimal impact; analysis robust</td>
+                    </tr>
+                    <tr style="background: rgba(255, 159, 10, 0.05);">
+                        <td>Private AI correction (-40%)</td>
+                        <td><span class="warning">-$174B (-2.1%)</span></td>
+                        <td>16.6x</td>
+                        <td>Private froth immaterial (8% of EV)</td>
+                    </tr>
+                    <tr style="background: rgba(255, 69, 58, 0.05);">
+                        <td>Public tech selloff (-20%)</td>
+                        <td><span class="negative">-$1,532B (-18.5%)</span></td>
+                        <td>13.8x</td>
+                        <td><strong>KEY RISK:</strong> 84% in 2 stocks</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="alert success">
+            <h4 style="color: var(--accent-green); margin-bottom: 0.5rem;">✓ Robust to Estimation Errors</h4>
+            <p style="margin-bottom: 0;">Even extreme scenarios (±20% on top uncertainties) change consolidated EV/Revenue by less than ±1.2%. The finding that "valuation is growing faster than revenue" holds across all scenarios.</p>
+        </div>
+    </section>
+
+    <!-- Companies -->
+    <section id="companies">
+        <h2>Companies in the Bubble</h2>
+        <p>15 seed companies meeting materiality thresholds (≥$500M annual value OR ≥1% of revenue).</p>
+
+        <h3>Public Companies (5)</h3>
+        <div class="company-list">
+            <div class="company-tag public">
+                <strong>Nvidia</strong><br>
+                <small style="color: var(--text-secondary);">Santa Clara, CA</small>
+            </div>
+            <div class="company-tag public">
+                <strong>Microsoft</strong><br>
+                <small style="color: var(--text-secondary);">Redmond, WA</small>
+            </div>
+            <div class="company-tag public">
+                <strong>Oracle</strong><br>
+                <small style="color: var(--text-secondary);">Austin, TX</small>
+            </div>
+            <div class="company-tag public">
+                <strong>AMD</strong><br>
+                <small style="color: var(--text-secondary);">Santa Clara, CA</small>
+            </div>
+            <div class="company-tag public">
+                <strong>Intel</strong><br>
+                <small style="color: var(--text-secondary);">Santa Clara, CA</small>
+            </div>
+        </div>
+
+        <h3>Private Companies (10)</h3>
+        <div class="company-list">
+            <div class="company-tag private">
+                <strong>OpenAI</strong><br>
+                <small style="color: var(--text-secondary);">$300B valuation</small>
+            </div>
+            <div class="company-tag private">
+                <strong>CoreWeave</strong><br>
+                <small style="color: var(--text-secondary);">$70B valuation</small>
+            </div>
+            <div class="company-tag private">
+                <strong>xAI</strong><br>
+                <small style="color: var(--text-secondary);">$50B valuation</small>
+            </div>
+            <div class="company-tag private">
+                <strong>Nebius</strong><br>
+                <small style="color: var(--text-secondary);">$27.6B (public)</small>
+            </div>
+            <div class="company-tag private">
+                <strong>Anysphere</strong><br>
+                <small style="color: var(--text-secondary);">$9.9B valuation</small>
+            </div>
+            <div class="company-tag private">
+                <strong>Mistral</strong><br>
+                <small style="color: var(--text-secondary);">$6B valuation</small>
+            </div>
+            <div class="company-tag private">
+                <strong>Figure AI</strong><br>
+                <small style="color: var(--text-secondary);">$3.5B valuation</small>
+            </div>
+            <div class="company-tag private">
+                <strong>Harvey AI</strong><br>
+                <small style="color: var(--text-secondary);">$1.5B valuation</small>
+            </div>
+            <div class="company-tag private">
+                <strong>Ambience Healthcare</strong><br>
+                <small style="color: var(--text-secondary);">$1B valuation</small>
+            </div>
+            <div class="company-tag private">
+                <strong>Nscale</strong><br>
+                <small style="color: var(--text-secondary);">$500M valuation</small>
+            </div>
+        </div>
+
+        <h3>Key Relationships</h3>
+        <div class="card-grid">
+            <div class="insight-card">
+                <h4>Microsoft → Nebius</h4>
+                <p><strong>$17.4B</strong> cloud infrastructure deal (5 years)<br>
+                100,000 Nvidia GB300 chips</p>
+            </div>
+            <div class="insight-card">
+                <h4>Microsoft → OpenAI</h4>
+                <p><strong>$13B</strong> investment + Azure cloud partnership<br>
+                Strategic AI collaboration</p>
+            </div>
+            <div class="insight-card">
+                <h4>OpenAI → CoreWeave</h4>
+                <p><strong>$22.4B</strong> total cloud contract<br>
+                Multi-year GPU infrastructure</p>
+            </div>
+            <div class="insight-card">
+                <h4>Nvidia → OpenAI</h4>
+                <p><strong>Up to $100B</strong> planned commitment<br>
+                Chips + equity investment</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Data Sources -->
+    <section id="data">
+        <h2>Methodology & Sources</h2>
+        
+        <h3>Data Collection Approach</h3>
+        <p><strong>Public Companies:</strong> SEC filings (10-K, 10-Q) from EDGAR for Nvidia, Microsoft, Oracle, AMD, and Intel.</p>
+        <p><strong>Private Companies:</strong> Best available estimates from Financial Times, Wall Street Journal, Bloomberg, Reuters, and TechCrunch with confidence scores and ranges.</p>
+
+        <h3>Consolidation Methodology</h3>
+        <div class="alert info">
+            <p><strong>Outside Revenue = Total Revenue - Internal Revenue</strong></p>
+            <p style="margin: 0.5rem 0 0;">Removed $31.93B of bubble-to-bubble payments (2025 LTM) to avoid double-counting:</p>
+            <ul style="margin: 0.5rem 0 0 1.5rem; color: var(--text-secondary);">
+                <li>Chip sales: Nvidia to Microsoft/Oracle/CoreWeave ($22.4B)</li>
+                <li>Cloud services: OpenAI/xAI to Microsoft Azure ($2.25B)</li>
+                <li>Processors: AMD/Intel to Microsoft/Oracle ($6.75B)</li>
+                <li>API services: Anysphere to OpenAI ($30M)</li>
+            </ul>
+        </div>
+
+        <h3>Top 10 Primary Sources</h3>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Source</th>
+                        <th>Data Type</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td><strong>Reuters</strong></td>
+                        <td>Nebius deals, OpenAI funding, CoreWeave valuation</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td><strong>Nvidia Investor Relations</strong></td>
+                        <td>SEC filings (10-K, 10-Q), earnings releases</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td><strong>Microsoft Investor Relations</strong></td>
+                        <td>SEC filings, Azure AI revenue data</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td><strong>Wikipedia</strong></td>
+                        <td>OpenAI revenue ($12B), Anysphere valuation</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td><strong>Oracle Investor Relations</strong></td>
+                        <td>Cloud infrastructure revenue disclosures</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td><strong>AMD Investor Relations</strong></td>
+                        <td>Data Center segment, MI300 revenue</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td><strong>Intel Investor Relations</strong></td>
+                        <td>DCAI segment, Gaudi AI accelerators</td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td><strong>Tom's Hardware</strong></td>
+                        <td>Microsoft $33B neocloud deals breakdown</td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td><strong>TechCrunch</strong></td>
+                        <td>Private company funding rounds</td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td><strong>Rothschild Growth Equity</strong></td>
+                        <td>xAI, Anysphere valuations and funding</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="alert warning">
+            <h4 style="color: var(--accent-orange); margin-bottom: 0.5rem;">⚠️ Data Quality Notes</h4>
+            <ul style="margin: 0.5rem 0 0 1.5rem; color: var(--text-secondary);">
+                <li><strong>High Confidence (5/5):</strong> Public company SEC filings and major deal announcements</li>
+                <li><strong>Moderate Confidence (3-4/5):</strong> AI revenue apportionment, private valuations from funding rounds</li>
+                <li><strong>Low Confidence (1-2/5):</strong> Private company revenues, especially smaller startups</li>
+            </ul>
+            <p style="margin: 1rem 0 0;">Despite gaps, high-uncertainty items drive <10% of consolidated metrics, so conclusions are robust.</p>
+        </div>
+    </section>
+
+    <!-- Conclusion -->
+    <section style="text-align: center; padding: 4rem 2rem;">
+        <h2>Conclusion</h2>
+        <p style="max-width: 800px; margin: 0 auto 2rem;">The AI bubble demonstrates robust growth and justifies a premium valuation, but <span class="highlight">multiple expansion has outpaced revenue growth by 2x</span>, creating downside risk if growth decelerates. The bubble is highly concentrated (84% in Nvidia + Microsoft), making it vulnerable to a public tech correction but resilient to private AI revaluations.</p>
+
+        <div class="alert warning" style="max-width: 800px; margin: 0 auto; text-align: left;">
+            <h4 style="color: var(--accent-orange); margin-bottom: 0.5rem;">The Bubble is Priced for Perfection</h4>
+            <p style="margin-bottom: 0.5rem;">With AI revenue growth already slowing from 47% to 38% and competition intensifying, a <strong>20-30% correction is plausible</strong> if revenue growth normalizes to 10-15%.</p>
+            <p style="margin: 0;"><strong>Monitor:</strong> (1) Nvidia's pricing power, (2) Microsoft's AI monetization, (3) Private unicorn IPO valuations.</p>
+        </div>
+
+        <div style="margin-top: 3rem;">
+            <p style="color: var(--text-secondary); font-size: 0.875rem;">Analysis Date: November 13, 2025 • LTM Period: Twelve months ending September 30, 2025</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>AI Bubble Financial Analysis • All data sourced from public filings and reputable financial press</p>
+        <p style="margin-top: 0.5rem;">For detailed methodology and full source documentation, see accompanying files</p>
+    </footer>
+</body>
+</html>
+

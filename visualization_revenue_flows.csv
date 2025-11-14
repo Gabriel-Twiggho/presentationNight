@@ -1,0 +1,28 @@
+flow_type,source,target,value_USD,description
+External,External Customers,Microsoft,273250000000,Microsoft external revenue (cloud services enterprise software etc)
+External,External Customers,Nvidia,67070000000,Nvidia external revenue (non-bubble GPU sales)
+External,External Customers,Oracle,52000000000,Oracle external revenue (database cloud services)
+External,External Customers,Intel,49500000000,Intel external revenue (processors to non-bubble)
+External,External Customers,AMD,26750000000,AMD external revenue (processors GPUs to non-bubble)
+External,External Customers,OpenAI,11970000000,OpenAI external revenue (ChatGPT enterprise API)
+External,External Customers,CoreWeave,3000000000,CoreWeave external revenue (non-bubble cloud customers)
+External,External Customers,xAI,800000000,xAI external revenue (Grok subscriptions)
+External,External Customers,Nebius,584000000,Nebius external revenue (non-bubble infrastructure)
+External,External Customers,Anysphere,500000000,Anysphere external revenue (Cursor subscriptions)
+External,External Customers,Mistral,300000000,Mistral external revenue (API enterprise)
+External,External Customers,Figure AI,150000000,Figure AI external revenue (robot pilots)
+External,External Customers,Harvey AI,120000000,Harvey AI external revenue (legal AI)
+External,External Customers,Ambience Healthcare,80000000,Ambience Healthcare external revenue (medical AI)
+External,External Customers,Nscale,50000000,Nscale external revenue (infrastructure)
+Internal,Microsoft,Nvidia,12000000000,GPU purchases for Azure
+Internal,Oracle,Nvidia,4000000000,GPU purchases for OCI
+Internal,CoreWeave,Nvidia,6000000000,GPU infrastructure purchases
+Internal,Nebius,Nvidia,400000000,GPU infrastructure purchases
+Internal,OpenAI,Microsoft,1500000000,Azure cloud services
+Internal,xAI,Microsoft,750000000,Azure cloud services
+Internal,Microsoft,AMD,1500000000,MI300 accelerator purchases
+Internal,Oracle,AMD,750000000,AMD processor purchases
+Internal,Microsoft,Intel,3000000000,Xeon processor purchases
+Internal,Oracle,Intel,1500000000,Processor purchases
+Internal,Anysphere,OpenAI,30000000,API usage for Cursor
+
