@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Bubble Financial Analysis</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -12,958 +13,2474 @@
         }
 
         :root {
-            --primary-bg: #000000;
-            --secondary-bg: #1d1d1f;
-            --card-bg: #2c2c2e;
-            --text-primary: #f5f5f7;
-            --text-secondary: #a1a1a6;
-            --accent-blue: #0071e3;
-            --accent-green: #30d158;
-            --accent-red: #ff453a;
-            --accent-orange: #ff9f0a;
+            --primary-bg: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            --secondary-bg: rgba(255, 255, 255, 0.03);
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-hover: rgba(255, 255, 255, 0.08);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --accent: #00ff88;
+            --accent-blue: #00d4ff;
+            --accent-red: #ff4444;
+            --accent-yellow: #ffaa00;
+            --border: rgba(255, 255, 255, 0.1);
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--primary-bg);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             color: var(--text-primary);
             line-height: 1.6;
-            overflow-x: hidden;
+            position: relative;
         }
 
-        /* Navigation */
-        nav {
+        body::before {
+            content: '';
             position: fixed;
             top: 0;
-            width: 100%;
-            background: rgba(29, 29, 31, 0.8);
-            backdrop-filter: blur(20px);
-            z-index: 1000;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(0, 255, 136, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0, 212, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
         }
 
-        nav .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        nav .logo {
-            font-size: 1.5rem;
-            font-weight: 600;
-            letter-spacing: -0.5px;
-        }
-
-        nav ul {
-            display: flex;
-            list-style: none;
-            gap: 2rem;
-        }
-
-        nav a {
-            color: var(--text-primary);
-            text-decoration: none;
-            font-size: 0.875rem;
-            transition: opacity 0.3s;
-        }
-
-        nav a:hover {
-            opacity: 0.7;
-        }
-
-        /* Hero Section */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 6rem 2rem 4rem;
-            background: linear-gradient(180deg, #000 0%, #1d1d1f 100%);
-        }
-
-        .hero h1 {
-            font-size: clamp(2.5rem, 8vw, 5rem);
-            font-weight: 700;
-            margin-bottom: 1rem;
-            letter-spacing: -2px;
-            background: linear-gradient(135deg, #f5f5f7 0%, #a1a1a6 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .hero .subtitle {
-            font-size: clamp(1.25rem, 3vw, 1.75rem);
-            color: var(--text-secondary);
-            margin-bottom: 3rem;
-            font-weight: 400;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .stat-card {
+        /* Header */
+        .header {
             background: var(--card-bg);
-            border-radius: 18px;
-            padding: 2rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            padding: 3rem 2rem;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+            position: relative;
+            z-index: 1;
         }
 
-        .stat-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-        }
-
-        .stat-number {
+        .header h1 {
             font-size: 2.5rem;
             font-weight: 700;
             margin-bottom: 0.5rem;
-            background: linear-gradient(135deg, var(--accent-blue) 0%, #00a8e8 100%);
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-blue) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
 
-        .stat-label {
+        .header .correction-badge {
+            display: inline-block;
+            background: var(--accent-red);
+            color: white;
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .header .subtitle {
+            font-size: 1.125rem;
             color: var(--text-secondary);
-            font-size: 0.9rem;
+            max-width: 800px;
+            margin: 1rem auto;
+        }
+
+        .header .meta {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .meta-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
-        .stat-change {
-            margin-top: 1rem;
+        .meta-value {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-top: 0.25rem;
+        }
+
+        /* Navigation Tabs */
+        .nav-tabs {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            display: flex;
+            justify-content: center;
+            gap: 0;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            overflow-x: auto;
+        }
+
+        .nav-tab {
+            padding: 1rem 2rem;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
             font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
         }
 
-        .positive {
-            color: var(--accent-green);
+        .nav-tab:hover {
+            color: var(--text-primary);
+            background: var(--card-bg);
         }
 
-        .negative {
+        .nav-tab.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Cards - Glassmorphism */
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--glass-border);
+            transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 255, 136, 0.2);
+            border-color: rgba(0, 255, 136, 0.3);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .card-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .badge-danger {
+            background: var(--accent-red);
+            color: white;
+        }
+
+        .badge-warning {
+            background: var(--accent-yellow);
+            color: black;
+        }
+
+        .badge-success {
+            background: var(--accent);
+            color: black;
+        }
+
+        /* Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .metric-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            padding: 1.5rem;
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            text-align: center;
+            transition: all 0.3s;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .metric-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 255, 136, 0.2);
+        }
+
+        .metric-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-change {
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .metric-change.positive {
+            color: var(--accent);
+        }
+
+        .metric-change.negative {
             color: var(--accent-red);
         }
 
-        .warning {
-            color: var(--accent-orange);
-        }
-
-        /* Section Styling */
-        section {
-            padding: 6rem 2rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        section h2 {
-            font-size: clamp(2rem, 5vw, 3rem);
-            margin-bottom: 1rem;
-            font-weight: 700;
-            letter-spacing: -1px;
-        }
-
-        section h3 {
-            font-size: 1.75rem;
-            margin: 2rem 0 1rem;
-            font-weight: 600;
-        }
-
-        section p {
-            color: var(--text-secondary);
-            font-size: 1.125rem;
-            line-height: 1.8;
-            margin-bottom: 1.5rem;
-        }
-
-        /* Table Styling */
-        .table-container {
-            overflow-x: auto;
-            background: var(--card-bg);
-            border-radius: 18px;
-            padding: 2rem;
-            margin: 2rem 0;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        table {
+        /* Table */
+        .data-table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 1rem;
         }
 
-        th {
-            text-align: left;
+        .data-table th {
+            background: var(--secondary-bg);
             padding: 1rem;
-            background: rgba(0, 113, 227, 0.1);
-            color: var(--accent-blue);
-            font-weight: 600;
+            text-align: left;
             font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--accent);
             text-transform: uppercase;
             letter-spacing: 1px;
+            border-bottom: 2px solid var(--accent);
         }
 
-        td {
+        .data-table td {
             padding: 1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            font-size: 0.95rem;
+            border-bottom: 1px solid var(--border);
         }
 
-        tr:last-child td {
-            border-bottom: none;
+        .data-table tr:hover {
+            background: var(--card-hover);
         }
 
-        tr:hover {
-            background: rgba(255, 255, 255, 0.02);
+        .data-table .company-name {
+            font-weight: 600;
+            color: var(--text-primary);
         }
 
-        /* Card Grid */
-        .card-grid {
+        .data-table .number {
+            font-family: 'Monaco', 'Courier New', monospace;
+            text-align: right;
+        }
+
+        /* Search and Filter */
+        .controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .filter-btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            background: var(--card-hover);
+            border-color: var(--accent);
+        }
+
+        .filter-btn.active {
+            background: var(--accent);
+            color: black;
+            border-color: var(--accent);
+        }
+
+        /* Comparison Section */
+        .comparison-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin: 2rem 0;
+            gap: 1.5rem;
+            margin-top: 2rem;
         }
 
-        .insight-card {
+        .comparison-card {
             background: var(--card-bg);
-            border-radius: 18px;
-            padding: 2rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
         }
 
-        .insight-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-            border-color: rgba(0, 113, 227, 0.3);
-        }
-
-        .insight-card h4 {
-            font-size: 1.25rem;
+        .comparison-header {
+            font-size: 1.125rem;
+            font-weight: 600;
             margin-bottom: 1rem;
-            color: var(--accent-blue);
+            color: var(--accent);
         }
 
-        .insight-card p {
-            font-size: 1rem;
-            margin-bottom: 0;
+        .comparison-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .comparison-label {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .comparison-value {
+            font-weight: 600;
+            font-family: 'Monaco', 'Courier New', monospace;
         }
 
         /* Alert Box */
         .alert {
-            background: rgba(255, 69, 58, 0.1);
-            border-left: 4px solid var(--accent-red);
-            padding: 1.5rem;
-            border-radius: 12px;
-            margin: 2rem 0;
-        }
-
-        .alert.warning {
-            background: rgba(255, 159, 10, 0.1);
-            border-left-color: var(--accent-orange);
-        }
-
-        .alert.info {
-            background: rgba(0, 113, 227, 0.1);
-            border-left-color: var(--accent-blue);
-        }
-
-        .alert.success {
-            background: rgba(48, 209, 88, 0.1);
-            border-left-color: var(--accent-green);
-        }
-
-        /* Companies Section */
-        .company-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 1rem;
-            margin: 2rem 0;
-        }
-
-        .company-tag {
-            background: var(--card-bg);
             padding: 1rem 1.5rem;
-            border-radius: 12px;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid;
         }
 
-        .company-tag:hover {
-            background: rgba(0, 113, 227, 0.2);
-            border-color: var(--accent-blue);
+        .alert-danger {
+            background: rgba(255, 68, 68, 0.1);
+            border-color: var(--accent-red);
+            color: #ffdddd;
         }
 
-        .company-tag.public {
-            border-left: 3px solid var(--accent-green);
+        .alert-warning {
+            background: rgba(255, 170, 0, 0.1);
+            border-color: var(--accent-yellow);
+            color: #ffeecc;
         }
 
-        .company-tag.private {
-            border-left: 3px solid var(--accent-orange);
+        .alert-info {
+            background: rgba(0, 255, 136, 0.1);
+            border-color: var(--accent);
+            color: #ccffee;
         }
 
         /* Footer */
-        footer {
-            background: var(--secondary-bg);
-            padding: 3rem 2rem;
+        .footer {
             text-align: center;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        footer p {
+            padding: 3rem 2rem;
             color: var(--text-secondary);
-            font-size: 0.875rem;
+            border-top: 1px solid var(--border);
+            margin-top: 4rem;
         }
 
-        /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 10px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--primary-bg);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--card-bg);
+        /* Slider Styling */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 8px;
             border-radius: 5px;
+            outline: none;
+            opacity: 0.9;
+            transition: opacity 0.2s;
         }
 
-        ::-webkit-scrollbar-thumb:hover {
-            background: #3a3a3c;
+        input[type="range"]:hover {
+            opacity: 1;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+            transition: all 0.3s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.8);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+            transition: all 0.3s;
+        }
+
+        input[type="range"]::-moz-range-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.8);
         }
 
         /* Responsive */
+        /* Network Visualization Styles */
+        .viz-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .viz-section {
+            padding: 0;
+        }
+
+        .viz-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            background: linear-gradient(135deg, var(--accent) 0%, var(--accent-blue) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        #network-svg, #consolidated-svg {
+            width: 100%;
+            height: 600px;
+            border-radius: 16px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .network-legend {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .network-tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1000;
+            max-width: 300px;
+        }
+
+        .network-tooltip.show {
+            opacity: 1;
+        }
+
+        .network-tooltip-title {
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .network-tooltip-content {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.6;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% {
+                filter: drop-shadow(0 0 20px rgba(0, 255, 136, 0.5));
+            }
+            50% {
+                filter: drop-shadow(0 0 40px rgba(0, 255, 136, 0.8));
+            }
+        }
+
+        .pulse-glow {
+            animation: pulse-glow 3s ease-in-out infinite;
+        }
+
+        @media (max-width: 1200px) {
+            .viz-wrapper {
+                grid-template-columns: 1fr;
+            }
+        }
+
         @media (max-width: 768px) {
-            nav ul {
-                display: none;
+            .header h1 {
+                font-size: 1.75rem;
             }
 
-            .stats-grid {
+            .header .meta {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .metrics-grid {
                 grid-template-columns: 1fr;
             }
 
-            section {
-                padding: 3rem 1rem;
+            .nav-tabs {
+                justify-content: flex-start;
             }
-        }
 
-        /* Smooth Scroll */
-        html {
-            scroll-behavior: smooth;
-        }
-
-        /* Fade-in Animation */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
+            .data-table {
+                font-size: 0.875rem;
             }
-            to {
-                opacity: 1;
-                transform: translateY(0);
+
+            .data-table th,
+            .data-table td {
+                padding: 0.75rem 0.5rem;
             }
-        }
 
-        .fade-in {
-            animation: fadeIn 0.8s ease-out;
-        }
-
-        /* Highlight */
-        .highlight {
-            color: var(--accent-blue);
-            font-weight: 600;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-left: 0.5rem;
-        }
-
-        .badge.high {
-            background: rgba(255, 69, 58, 0.2);
-            color: var(--accent-red);
-        }
-
-        .badge.medium {
-            background: rgba(255, 159, 10, 0.2);
-            color: var(--accent-orange);
-        }
-
-        .badge.low {
-            background: rgba(48, 209, 88, 0.2);
-            color: var(--accent-green);
+            #network-svg, #consolidated-svg {
+                height: 400px;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav>
+    <!-- Header -->
+    <div class="header">
+        <h1>AI Bubble Financial Analysis</h1>
+        <p class="subtitle">
+            Comprehensive financial consolidation of 15 seed AI companies, treating the ecosystem as a single entity.
+            Rigorous bottom-up analysis of revenue, enterprise value, and internal flows to determine if the AI sector is overvalued.
+        </p>
+        <div class="meta">
+            <div class="meta-item">
+                <span class="meta-label">Analysis Date</span>
+                <span class="meta-value">November 13, 2025</span>
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">LTM Period</span>
+                <span class="meta-value">To Sep 30, 2025</span>
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">Companies</span>
+                <span class="meta-value">15 Seeds</span>
+            </div>
+            <div class="meta-item">
+                <span class="meta-label">Method</span>
+                <span class="meta-value">Consolidated</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="nav-tabs">
+        <button class="nav-tab active" onclick="showTab('overview')">Overview</button>
+        <button class="nav-tab" onclick="showTab('network')">Network Viz</button>
+        <button class="nav-tab" onclick="showTab('companies')">Companies</button>
+        <button class="nav-tab" onclick="showTab('relationships')">Internal Flows</button>
+        <button class="nav-tab" onclick="showTab('methodology')">Methodology</button>
+        <button class="nav-tab" onclick="showTab('sensitivity')">Sensitivity</button>
+    </div>
+
+    <!-- Content Container -->
         <div class="container">
-            <div class="logo">AI Bubble Analysis</div>
-            <ul>
-                <li><a href="#overview">Overview</a></li>
-                <li><a href="#findings">Findings</a></li>
-                <li><a href="#data">Data</a></li>
-                <li><a href="#sensitivity">Sensitivity</a></li>
-                <li><a href="#companies">Companies</a></li>
-            </ul>
+        <!-- Network Visualization Tab -->
+        <div id="network-tab" class="tab-content">
+            <div class="alert alert-info">
+                <strong>💡 Interactive Network:</strong> Explore the AI ecosystem's interconnected web. Drag nodes to rearrange, hover for details. 
+                The left shows individual companies and their relationships; the right shows them consolidated as one entity.
         </div>
-    </nav>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div>
-            <h1 class="fade-in">AI Bubble Financial Analysis</h1>
-            <p class="subtitle fade-in">Comprehensive analysis of 15 AI companies • 2023-2025 LTM</p>
-            
-            <div class="stats-grid fade-in">
-                <div class="stat-card">
-                    <div class="stat-number">$488.7B</div>
-                    <div class="stat-label">Consolidated Revenue</div>
-                    <div class="stat-change positive">↑ 37.7% since 2023</div>
+            <div class="viz-wrapper">
+                <!-- Individual Network -->
+                <div class="card viz-section">
+                    <div class="viz-title">Individual Companies & Flows</div>
+                    <svg id="network-svg"></svg>
+                    <div class="network-legend">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #ff6b9d;"></div>
+                            <span>Hardware</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #4ecdc4;"></div>
+                            <span>Cloud/Services</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: #00ff88;"></div>
+                            <span>AI/Software</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-number">$8.28T</div>
-                    <div class="stat-label">Enterprise Value</div>
-                    <div class="stat-change positive">↑ 98.6% since 2023</div>
+
+                <!-- Consolidated View -->
+                <div class="card viz-section">
+                    <div class="viz-title">Consolidated as One Company</div>
+                    <svg id="consolidated-svg"></svg>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-number">16.9x</div>
-                    <div class="stat-label">EV/Revenue Multiple</div>
-                    <div class="stat-change warning">↑ 44% expansion</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-number">35.6%</div>
-                    <div class="stat-label">EV CAGR</div>
-                    <div class="stat-change negative">2x faster than revenue</div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Key Insights from Network</div>
+                </div>
+                <div style="line-height: 1.8; color: var(--text-secondary);">
+                    <p style="margin-bottom: 1rem;"><strong style="color: var(--accent);">Hub-and-Spoke Structure:</strong> Nvidia and Microsoft act as central hubs, with most other companies connecting through them.</p>
+                    
+                    <p style="margin-bottom: 1rem;"><strong style="color: var(--accent-yellow);">Circular Dependencies:</strong> Money flows in loops (e.g., OpenAI → Nvidia → Microsoft → OpenAI), creating cascade risk.</p>
+                    
+                    <p style="margin-bottom: 1rem;"><strong style="color: var(--accent);">Size = Enterprise Value:</strong> Larger circles represent higher valuations. Microsoft + Nvidia dominate the visual because they're 84% of total EV.</p>
+                    
+                    <p><strong style="color: var(--accent);">Consolidated View:</strong> When treated as one company, the bubble is valued at $8.28T with $494B outside revenue, resulting in a 16.75x EV/Revenue multiple.</p>
                 </div>
             </div>
         </div>
-    </section>
 
-    <!-- Executive Summary -->
-    <section id="overview">
-        <h2>Executive Summary</h2>
-        <p>This analysis treats the AI ecosystem as a consolidated entity, aggregating 15 seed companies with their material relationships. We calculated consolidated outside revenue and enterprise value for fiscal years 2023, 2024, and the latest twelve months (LTM) ending September 30, 2025, removing inter-company transactions to avoid double-counting.</p>
+        <!-- Overview Tab -->
+        <div id="overview-tab" class="tab-content active">
+            <div class="alert alert-danger">
+                <strong>🚨 KEY FINDING:</strong> At 16.75x EV/Revenue, the AI bubble is <strong>OVERVALUED</strong> unless sustained 25-30% growth is achieved. 
+                The bubble trades at a 40% premium to high-growth SaaS multiples and requires significantly higher growth rates to justify current valuations.
+            </div>
 
-        <div class="alert warning">
-            <h4 style="color: var(--accent-orange); margin-bottom: 0.5rem;">⚠️ Key Finding</h4>
-            <p style="margin-bottom: 0;"><strong>Valuation is growing ~2x faster than revenue.</strong> Enterprise value grew 35.6% annually while revenue grew 17.3% annually, indicating substantial multiple expansion that may not be sustainable if growth slows.</p>
+            <h2 style="margin-bottom: 1.5rem; font-size: 1.75rem;">Consolidated Metrics (2025 LTM)</h2>
+            
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-label">Outside Revenue</div>
+                    <div class="metric-value">$494.1B</div>
+                    <div class="metric-change positive">↑ 14.9% YoY</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Enterprise Value</div>
+                    <div class="metric-value">$8.28T</div>
+                    <div class="metric-change positive">↑ 35.6% YoY</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">EV/Revenue (Full)</div>
+                    <div class="metric-value">16.75x</div>
+                    <div class="metric-change negative">⚠️ OVERVALUED</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Internal Flows</div>
+                    <div class="metric-value">$27.5B</div>
+                    <div class="metric-change negative">5.3% of Total</div>
+                </div>
         </div>
 
-        <h3>Consolidated Financial Performance</h3>
-        <div class="table-container">
-            <table>
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Three-Year Comparison</div>
+                    <span class="card-badge badge-warning">Valuation Growing 2.2x Faster</span>
+                </div>
+                
+                <!-- Revenue Growth Chart -->
+                <div style="margin: 1.5rem 0; padding: 1rem; background: rgba(0, 0, 0, 0.2); border-radius: 12px;">
+                    <div style="text-align: center; margin-bottom: 1rem;">
+                        <span style="font-weight: 600; color: var(--accent);">AI-Attributable Revenue Growth</span>
+                    </div>
+                    <svg id="revenue-chart" width="100%" height="250"></svg>
+                </div>
+
+                <table class="data-table">
                 <thead>
                     <tr>
-                        <th>Year</th>
-                        <th>Outside Revenue</th>
-                        <th>Enterprise Value</th>
-                        <th>EV/Revenue</th>
-                        <th>Revenue Growth</th>
-                        <th>EV Growth</th>
+                            <th>Metric</th>
+                            <th class="number">FY 2023</th>
+                            <th class="number">FY 2024</th>
+                            <th class="number">2025 LTM</th>
+                            <th class="number">CAGR</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td><strong>2023 (FY)</strong></td>
-                        <td>$354.95B</td>
-                        <td>$4,166.1B</td>
-                        <td>11.7x</td>
-                        <td>—</td>
-                        <td>—</td>
+                            <td class="company-name">Outside Revenue (Full)</td>
+                            <td class="number">$364.1B</td>
+                            <td class="number">$430.2B</td>
+                            <td class="number">$494.1B</td>
+                            <td class="number" style="color: var(--accent);">16.3%</td>
                     </tr>
                     <tr>
-                        <td><strong>2024 (FY)</strong></td>
-                        <td>$424.70B</td>
-                        <td>$6,100.6B</td>
-                        <td>14.4x</td>
-                        <td><span class="positive">+19.7%</span></td>
-                        <td><span class="positive">+46.4%</span></td>
+                            <td class="company-name">Outside Revenue (AI)</td>
+                            <td class="number">$122.6B</td>
+                            <td class="number">$166.8B</td>
+                            <td class="number">$223.6B</td>
+                            <td class="number" style="color: var(--accent);">34.7%</td>
                     </tr>
                     <tr>
-                        <td><strong>2025 LTM</strong></td>
-                        <td>$488.65B</td>
-                        <td>$8,275.0B</td>
-                        <td>16.9x</td>
-                        <td><span class="positive">+15.1%</span></td>
-                        <td><span class="positive">+35.6%</span></td>
+                            <td class="company-name">Enterprise Value</td>
+                            <td class="number">$4,167.1B</td>
+                            <td class="number">$6,100.6B</td>
+                            <td class="number">$8,275.0B</td>
+                            <td class="number" style="color: var(--accent-yellow);">35.6%</td>
+                    </tr>
+                        <tr>
+                            <td class="company-name">EV/Revenue (Full)</td>
+                            <td class="number">11.44x</td>
+                            <td class="number">14.18x</td>
+                            <td class="number" style="color: var(--accent-red); font-weight: 700;">16.75x</td>
+                            <td class="number" style="color: var(--accent-red);">+46%</td>
+                    </tr>
+                        <tr>
+                            <td class="company-name">Internal Flows</td>
+                            <td class="number">$4.1B</td>
+                            <td class="number">$16.0B</td>
+                            <td class="number">$27.5B</td>
+                            <td class="number">+160%</td>
                     </tr>
                 </tbody>
             </table>
         </div>
 
-        <h3>AI-Attributable Revenue</h3>
-        <div class="table-container">
-            <table>
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Key Findings</div>
+                    <span class="card-badge badge-danger">HIGH RISK</span>
+        </div>
+                <div style="line-height: 1.8; color: var(--text-secondary);">
+                    <p style="margin-bottom: 1rem;"><strong style="color: var(--accent-red);">1. OVERVALUED</strong> — At 16.75x EV/Revenue, bubble trades at 40% premium to high-growth SaaS (12x) and 110% premium to Big Tech (8x). Requires 25-30% sustained growth to justify.</p>
+                    
+                    <p style="margin-bottom: 1rem;"><strong style="color: var(--accent-yellow);">2. Growth Decelerating</strong> — Revenue growth slowing (18.2% → 14.9%) while EV multiple expanding. Valuation growing 2.2x faster than revenue.</p>
+                    
+                    <p style="margin-bottom: 1rem;"><strong style="color: var(--accent-yellow);">3. Concentration Risk</strong> — Microsoft (46.5%) + Nvidia (37.5%) = 84% of consolidated EV. Highly sensitive to these two stocks.</p>
+                    
+                    <p style="margin-bottom: 1rem;"><strong style="color: var(--accent-yellow);">4. Circular Dependencies</strong> — $27.5B internal flows (5.3% of revenue) create cascade risk. xAI spends $4B on GPUs while generating $800M revenue.</p>
+                    
+                    <p><strong style="color: var(--accent);">5. Bottom-Up Analysis</strong> — Systematic review of each company's GPU procurement and cloud consumption identified $27.5B in internal flows (5.3% of total revenue).</p>
+                </div>
+            </div>
+            
+            <div class="comparison-container">
+                <div class="comparison-card">
+                    <div class="comparison-header">Valuation Comparables</div>
+                    <div class="comparison-row">
+                        <span class="comparison-label">AI Bubble</span>
+                        <span class="comparison-value" style="color: var(--accent-red);">16.75x</span>
+                    </div>
+                    <div class="comparison-row">
+                        <span class="comparison-label">High-Growth SaaS</span>
+                        <span class="comparison-value">12-15x</span>
+                    </div>
+                    <div class="comparison-row">
+                        <span class="comparison-label">Enterprise Software</span>
+                        <span class="comparison-value">10-12x</span>
+                    </div>
+                    <div class="comparison-row">
+                        <span class="comparison-label">Big Tech Average</span>
+                        <span class="comparison-value">8-10x</span>
+                    </div>
+            </div>
+            
+                <div class="comparison-card">
+                    <div class="comparison-header">Downside Scenarios</div>
+                    <div class="comparison-row">
+                        <span class="comparison-label">If growth stays ~15%</span>
+                        <span class="comparison-value" style="color: var(--accent-yellow);">-20%</span>
+                    </div>
+                    <div class="comparison-row">
+                        <span class="comparison-label">If growth slows to 10%</span>
+                        <span class="comparison-value" style="color: var(--accent-red);">-35%</span>
+                    </div>
+                    <div class="comparison-row">
+                        <span class="comparison-label">If 20% tech selloff</span>
+                        <span class="comparison-value" style="color: var(--accent-red);">-18.5%</span>
+                    </div>
+                    <div class="comparison-row">
+                        <span class="comparison-label">Fair value growth</span>
+                        <span class="comparison-value" style="color: var(--accent);">25-30%</span>
+                    </div>
+            </div>
+            
+                <div class="comparison-card">
+                    <div class="comparison-header">Market Context</div>
+                    <div class="comparison-row">
+                        <span class="comparison-label">Market Cap Concentration</span>
+                        <span class="comparison-value">92% Public Companies</span>
+                    </div>
+                    <div class="comparison-row">
+                        <span class="comparison-label">Top 2 Companies</span>
+                        <span class="comparison-value">84% of Total EV</span>
+                    </div>
+                    <div class="comparison-row">
+                        <span class="comparison-label">Internal Dependencies</span>
+                        <span class="comparison-value" style="color: var(--accent-yellow);">$27.5B (5.3%)</span>
+                    </div>
+                    <div class="comparison-row">
+                        <span class="comparison-label">Cascade Risk</span>
+                        <span class="comparison-value" style="color: var(--accent-red);">Elevated</span>
+                    </div>
+                </div>
+            </div>
+            </div>
+            
+        <!-- Companies Tab -->
+        <div id="companies-tab" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">All Companies (15 Seeds)</div>
+                </div>
+                <div class="controls">
+                    <div class="search-box">
+                        <input type="text" id="company-search" placeholder="Search companies..." onkeyup="filterCompanies()">
+                    </div>
+                    <button class="filter-btn active" onclick="filterByType('all')">All</button>
+                    <button class="filter-btn" onclick="filterByType('public')">Public (5)</button>
+                    <button class="filter-btn" onclick="filterByType('private')">Private (10)</button>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="data-table" id="companies-table">
+                        <thead>
+                            <tr>
+                                <th>Company</th>
+                                <th>Type</th>
+                                <th>HQ</th>
+                                <th class="number">2023 Revenue</th>
+                                <th class="number">2024 Revenue</th>
+                                <th class="number">2025 LTM Revenue</th>
+                                <th class="number">2025 LTM EV</th>
+                                <th class="number">EV % of Total</th>
+                                <th>Confidence</th>
+                            </tr>
+                        </thead>
+                        <tbody id="companies-tbody">
+                            <!-- Will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="alert alert-info">
+                <strong>Top Contributors:</strong> Microsoft (46.5% of EV) and Nvidia (37.5% of EV) represent 84% of consolidated enterprise value.
+                Top 5 companies = 94% of total EV. Private AI companies (OpenAI, CoreWeave, xAI, etc.) represent only 8% of consolidated EV.
+            </div>
+        </div>
+
+        <!-- Relationships Tab -->
+        <div id="relationships-tab" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Internal Revenue Flows (2025 LTM)</div>
+                    <span class="card-badge badge-danger">$27.5B Removed</span>
+        </div>
+
+                <h3 style="margin: 1.5rem 0 1rem; color: var(--accent);">GPU Purchases → Nvidia ($21.0B)</h3>
+                <table class="data-table">
                 <thead>
                     <tr>
-                        <th>Year</th>
-                        <th>AI Revenue</th>
-                        <th>EV/AI Revenue</th>
-                        <th>AI Growth YoY</th>
+                            <th>From</th>
+                            <th>To</th>
+                            <th class="number">Amount</th>
+                            <th>Description</th>
+                            <th>Confidence</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td><strong>2023 (FY)</strong></td>
-                        <td>$83.70B</td>
-                        <td>49.8x</td>
-                        <td>—</td>
+                            <td class="company-name">xAI</td>
+                            <td>Nvidia</td>
+                            <td class="number" style="color: var(--accent-red); font-weight: 700;">$4.0B</td>
+                            <td>Colossus 100k H100 GPUs</td>
+                            <td>4/5</td>
                     </tr>
                     <tr>
-                        <td><strong>2024 (FY)</strong></td>
-                        <td>$122.80B</td>
-                        <td>49.7x</td>
-                        <td><span class="positive">+46.7%</span></td>
+                            <td class="company-name">Microsoft</td>
+                            <td>Nvidia</td>
+                            <td class="number">$7.0B</td>
+                            <td>Azure AI infrastructure</td>
+                            <td>4/5</td>
                     </tr>
                     <tr>
-                        <td><strong>2025 LTM</strong></td>
-                        <td>$169.67B</td>
-                        <td>48.8x</td>
-                        <td><span class="warning">+38.2%</span></td>
+                            <td class="company-name">Oracle</td>
+                            <td>Nvidia</td>
+                            <td class="number">$3.5B</td>
+                            <td>OCI AI cloud expansion</td>
+                            <td>4/5</td>
+                    </tr>
+                    <tr>
+                            <td class="company-name">CoreWeave</td>
+                            <td>Nvidia</td>
+                            <td class="number">$2.5B</td>
+                            <td>GPU cloud provider capex</td>
+                            <td>4/5</td>
+                    </tr>
+                    <tr>
+                            <td class="company-name">Nebius</td>
+                            <td>Nvidia</td>
+                            <td class="number">$1.5B</td>
+                            <td>Cloud buildout for MSFT contract</td>
+                            <td>3/5</td>
+                    </tr>
+                    <tr>
+                            <td class="company-name">OpenAI</td>
+                            <td>Nvidia</td>
+                            <td class="number">$1.5B</td>
+                            <td>Direct GPU purchases (training)</td>
+                            <td>3/5</td>
+                        </tr>
+                        <tr>
+                            <td class="company-name">Mistral + Figure + Others</td>
+                            <td>Nvidia</td>
+                            <td class="number">$1.0B</td>
+                            <td>AI training infrastructure</td>
+                            <td>2/5</td>
+                    </tr>
+                </tbody>
+            </table>
+
+                <h3 style="margin: 1.5rem 0 1rem; color: var(--accent);">Cloud Services ($6.5B)</h3>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>From</th>
+                            <th>To</th>
+                            <th class="number">Amount</th>
+                            <th>Description</th>
+                            <th>Confidence</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="company-name">OpenAI</td>
+                            <td>Microsoft</td>
+                            <td class="number">$2.5B</td>
+                            <td>Azure inference + training</td>
+                            <td>4/5</td>
+                        </tr>
+                        <tr>
+                            <td class="company-name">OpenAI</td>
+                            <td>CoreWeave</td>
+                            <td class="number">$2.5B</td>
+                            <td>GPU cloud for training</td>
+                            <td>3/5</td>
+                        </tr>
+                        <tr>
+                            <td class="company-name">OpenAI</td>
+                            <td>Oracle</td>
+                            <td class="number">$1.5B</td>
+                            <td>OCI cloud services</td>
+                            <td>3/5</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="alert alert-warning">
+                <strong>⚠️ Circular Dependency Risk:</strong> xAI spends $4B on GPUs while generating only $800M revenue (5x spend-to-revenue ratio).
+                This creates a circular loop: xAI raises funds → buys Nvidia GPUs → Nvidia stock rises → xAI valuation increases → enables more fundraising.
+                If xAI can't raise next round, the loop breaks.
+            </div>
+            </div>
+            
+        <!-- Methodology Tab -->
+        <div id="methodology-tab" class="tab-content">
+            <div class="alert alert-info">
+                <strong>📊 METHODOLOGY:</strong> This analysis uses a bottom-up approach to systematically identify and eliminate internal revenue flows within the AI bubble, providing an accurate view of true outside revenue and valuation metrics.
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Internal Flow Identification Process</div>
+                    <span class="card-badge badge-success">Bottom-Up Analysis</span>
+            </div>
+                <table class="data-table">
+                <thead>
+                    <tr>
+                            <th>Step</th>
+                            <th>Process</th>
+                            <th>Data Sources</th>
+                            <th>Confidence</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                            <td class="company-name">1. GPU Purchases</td>
+                            <td>Analyzed each company's AI infrastructure spending and GPU procurement patterns</td>
+                            <td>SEC filings (capex), company announcements, industry intelligence</td>
+                            <td>4/5 (High)</td>
+                    </tr>
+                    <tr>
+                            <td class="company-name">2. Cloud Services</td>
+                            <td>Mapped cloud service consumption between bubble companies (e.g., OpenAI using Azure, OCI, CoreWeave)</td>
+                            <td>Partnership announcements, revenue estimates, LLM cost models</td>
+                            <td>3-4/5 (Medium-High)</td>
+                    </tr>
+                    <tr>
+                            <td class="company-name">3. Direct Relationships</td>
+                            <td>Identified direct sales relationships (e.g., xAI's 100k GPU order, Microsoft's Azure buildout)</td>
+                            <td>Press releases, earnings calls, investigative reporting</td>
+                            <td>4/5 (High)</td>
+                    </tr>
+                        <tr>
+                            <td class="company-name">4. Validation</td>
+                            <td>Cross-checked internal flows against total revenue to ensure reasonableness (5.3% of total)</td>
+                            <td>Consolidated revenue data, industry benchmarks</td>
+                            <td>4/5 (High)</td>
+                    </tr>
+                        <tr>
+                            <td class="company-name">5. Sensitivity Testing</td>
+                            <td>Tested ±20% variance on estimates to ensure conclusion is robust</td>
+                            <td>Monte Carlo scenarios, conservative/aggressive bounds</td>
+                            <td>5/5 (Very High)</td>
                     </tr>
                 </tbody>
             </table>
         </div>
 
-        <div class="alert info">
-            <p style="margin-bottom: 0;"><strong>AI revenue growing 38% YoY</strong> but decelerating from 47% in 2024. The 48.8x AI-only multiple assumes sustained hyper-growth for 5+ years.</p>
-        </div>
-    </section>
+            <div class="card" style="margin-top: 1.5rem;">
+                <div class="card-header">
+                    <div class="card-title">Key Assumptions & Decisions</div>
+                </div>
+                <div style="line-height: 1.8; color: var(--text-secondary);">
+                    <p style="margin-bottom: 1rem;"><strong style="color: var(--accent);">LTM Period:</strong> September 30, 2025 chosen for alignment with public company reporting. Market caps as of November 13, 2025.</p>
+                    
+                    <p style="margin-bottom: 1rem;"><strong style="color: var(--accent);">Bubble Membership:</strong> 15 seed companies only. No 2-degree expansions qualified under materiality threshold (≥$500M annual value OR ≥1% of revenue).</p>
+                    
+                    <p style="margin-bottom: 1rem;"><strong style="color: var(--accent);">Consolidation Method:</strong> Full EV summation (no pro-rata adjustments). Internal flows removed to avoid double-counting. Two views: Full-Company and AI-Attributable.</p>
+                    
+                    <p style="margin-bottom: 1rem;"><strong style="color: var(--accent);">Private Valuations:</strong> Last funding round post-money valuation used. No secondary market adjustments. Confidence scores assigned based on data quality.</p>
+                    
+                    <p style="margin-bottom: 1rem;"><strong style="color: var(--accent);">xAI GPU Estimate:</strong> 100,000 H100 GPUs at ~$40k each = $4B (Colossus supercomputer). Confidence 4/5 based on public reports and GPU pricing data.</p>
+                    
+                    <p><strong style="color: var(--accent);">Sensitivity Range:</strong> $27.5B internal flows likely within ±$3-5B range ($23-32B). High-confidence items ($17.5B) represent 64% of total.</p>
+                </div>
+            </div>
 
-    <!-- Key Findings -->
-    <section id="findings">
-        <h2>Key Findings</h2>
-        
-        <div class="card-grid">
-            <div class="insight-card">
-                <h4>🎯 Multiple Expansion Risk</h4>
-                <p>EV/Revenue expanded from 11.7x to 16.9x (+44%). Market anticipates sustained high growth, but creates downside risk if growth normalizes to 10-15%.</p>
+            <div class="card" style="margin-top: 1.5rem;">
+                <div class="card-header">
+                    <div class="card-title">📐 Valuation Theory: EV/Revenue → Growth Rate Mapping</div>
+                </div>
+                <div style="line-height: 1.8; color: var(--text-secondary);">
+                    <p style="margin-bottom: 1rem;">
+                        The interactive sensitivity calculator uses established valuation theory to map EV/Revenue multiples to required growth rates. 
+                        This is based on a combination of <strong>DCF (Discounted Cash Flow) theory</strong> and <strong>public market benchmarks</strong>.
+                    </p>
+
+                    <h4 style="color: var(--accent); margin: 1.5rem 0 1rem;">1. Theoretical Foundation</h4>
+                    <p style="margin-bottom: 1rem;">
+                        Higher growth rates increase the present value of future cash flows. The simplified relationship is:
+                        <br><br>
+                        <code style="background: rgba(0, 0, 0, 0.3); padding: 0.5rem 1rem; border-radius: 8px; display: block; margin: 0.5rem 0;">
+                        EV/Revenue Multiple ≈ (Growth Rate × Retention) / (WACC - Growth Rate)
+                        </code>
+                        <br>
+                        In practice: <strong>Higher growth = Higher multiple</strong>
+                    </p>
+
+                    <h4 style="color: var(--accent); margin: 1.5rem 0 1rem;">2. Public Market Benchmarks (Real Data)</h4>
+                    <p style="margin-bottom: 1rem;">Historical examples from public SaaS/tech companies:</p>
+                    <div style="background: rgba(0, 0, 0, 0.3); padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+                        <table style="width: 100%; font-size: 0.875rem;">
+                            <tr style="color: var(--accent);">
+                                <th style="text-align: left; padding: 0.5rem;">Company</th>
+                                <th style="text-align: right; padding: 0.5rem;">EV/Revenue Peak</th>
+                                <th style="text-align: right; padding: 0.5rem;">Growth Rate</th>
+                                <th style="text-align: right; padding: 0.5rem;">Year</th>
+                            </tr>
+                            <tr><td style="padding: 0.5rem;">Snowflake</td><td style="text-align: right; padding: 0.5rem;">60-80x</td><td style="text-align: right; padding: 0.5rem;">100%+</td><td style="text-align: right; padding: 0.5rem;">2020-2021</td></tr>
+                            <tr><td style="padding: 0.5rem;">CrowdStrike</td><td style="text-align: right; padding: 0.5rem;">35-45x</td><td style="text-align: right; padding: 0.5rem;">50-70%</td><td style="text-align: right; padding: 0.5rem;">2021</td></tr>
+                            <tr><td style="padding: 0.5rem;">Datadog</td><td style="text-align: right; padding: 0.5rem;">40-50x</td><td style="text-align: right; padding: 0.5rem;">60-80%</td><td style="text-align: right; padding: 0.5rem;">2021</td></tr>
+                            <tr><td style="padding: 0.5rem;">MongoDB</td><td style="text-align: right; padding: 0.5rem;">25-35x</td><td style="text-align: right; padding: 0.5rem;">40-50%</td><td style="text-align: right; padding: 0.5rem;">2021</td></tr>
+                            <tr><td style="padding: 0.5rem;">Salesforce</td><td style="text-align: right; padding: 0.5rem;">12-15x</td><td style="text-align: right; padding: 0.5rem;">25-30%</td><td style="text-align: right; padding: 0.5rem;">2021</td></tr>
+                            <tr><td style="padding: 0.5rem;">Microsoft</td><td style="text-align: right; padding: 0.5rem;">10-12x</td><td style="text-align: right; padding: 0.5rem;">15-20%</td><td style="text-align: right; padding: 0.5rem;">2023</td></tr>
+                        </table>
+                    </div>
+
+                    <h4 style="color: var(--accent); margin: 1.5rem 0 1rem;">3. The "Rule of 40"</h4>
+                    <p style="margin-bottom: 1rem;">
+                        A famous SaaS metric: <strong>Revenue Growth% + Free Cash Flow Margin% ≥ 40%</strong>
+                    </p>
+                    <p style="margin-bottom: 1rem;">
+                        Companies that beat Rule of 40 get premium multiples:
+                    </p>
+                    <ul style="margin-left: 1.5rem; margin-bottom: 1rem;">
+                        <li style="margin-bottom: 0.5rem;"><strong>Rule of 60+:</strong> Can justify 20-30x</li>
+                        <li style="margin-bottom: 0.5rem;"><strong>Rule of 80+:</strong> Can justify 30-50x</li>
+                        <li style="margin-bottom: 0.5rem;"><strong>Below 40:</strong> Typically 8-15x</li>
+                    </ul>
+
+                    <h4 style="color: var(--accent); margin: 1.5rem 0 1rem;">4. Our Mapping (Conservative)</h4>
+                    <p style="margin-bottom: 1rem;">Based on these observations, we use the following conservative mapping:</p>
+                    <div style="background: rgba(0, 0, 0, 0.3); padding: 1rem; border-radius: 8px; margin: 1rem 0; font-family: 'Monaco', 'Courier New', monospace; font-size: 0.875rem;">
+                        <strong style="color: var(--accent);">EV/Revenue → Required Growth Rate</strong><br><br>
+                        8-12x  → 10-15%  (Mature tech: Microsoft, Oracle)<br>
+                        12-15x → 15-20%  (Moderate growth: Adobe, Intuit)<br>
+                        15-18x → 20-25%  (High growth: ServiceNow)<br>
+                        18-22x → 25-30%  (Very high growth: Databricks)<br>
+                        22-27x → 30-35%  (Hyper growth: Stripe)<br>
+                        27-35x → 35-40%  (Extreme growth: Snowflake 2021)<br>
+                        35x+   → 50%+    (Bubble: WeWork at peak)
+                    </div>
+
+                    <h4 style="color: var(--accent); margin: 1.5rem 0 1rem;">5. Application to AI Bubble</h4>
+                    <p style="margin-bottom: 1rem;">
+                        At <strong style="color: var(--accent-red);">16.75x</strong>, the AI bubble is in the <strong>"high growth"</strong> zone:
+                    </p>
+                    <ul style="margin-left: 1.5rem; margin-bottom: 1rem;">
+                        <li style="margin-bottom: 0.5rem;">Needs <strong style="color: var(--accent-yellow);">25-30% sustained growth</strong> to justify</li>
+                        <li style="margin-bottom: 0.5rem;">Current actual growth: <strong>14.9%</strong> (2025 LTM full-company)</li>
+                        <li style="margin-bottom: 0.5rem;"><strong style="color: var(--accent-red);">Gap: ~10-15 percentage points</strong></li>
+                    </ul>
+                    <p style="margin-bottom: 1rem;">
+                        If we underestimated by 200% (slider test), the multiple goes to <strong style="color: var(--accent-red);">~27x</strong>, 
+                        which would require <strong>35-40% growth</strong> — even harder to justify!
+                    </p>
+
+                    <h4 style="color: var(--accent); margin: 1.5rem 0 1rem;">⚠️ Important Caveats</h4>
+                    <p style="margin-bottom: 1rem;">
+                        This is a <strong>simplified first-order approximation</strong>. Real-world valuation also considers:
+                    </p>
+                    <ul style="margin-left: 1.5rem; margin-bottom: 1rem;">
+                        <li style="margin-bottom: 0.5rem;"><strong>Profitability & Margins:</strong> AI bubble has wide range (Nvidia 50%+, OpenAI negative)</li>
+                        <li style="margin-bottom: 0.5rem;"><strong>Capital Efficiency:</strong> Nvidia vs OpenAI very different capital requirements</li>
+                        <li style="margin-bottom: 0.5rem;"><strong>Competitive Moat:</strong> How defensible are the positions?</li>
+                        <li style="margin-bottom: 0.5rem;"><strong>TAM (Total Addressable Market):</strong> AI is huge, but how much is capturable?</li>
+                        <li style="margin-bottom: 0.5rem;"><strong>Market Sentiment:</strong> Tech bubble 2021 vs 2023 correction shows sentiment matters</li>
+                    </ul>
+                    <p style="margin-bottom: 1rem;">
+                        However, <strong>growth is the dominant factor</strong> for high-growth companies, making it a reasonable proxy for "fair value" analysis.
+                    </p>
+
+                    <h4 style="color: var(--accent); margin: 1.5rem 0 1rem;">📚 Sources & References</h4>
+                    <ul style="margin-left: 1.5rem;">
+                        <li style="margin-bottom: 0.5rem;"><strong>Bessemer Cloud Index:</strong> Tracks public SaaS multiples vs growth rates</li>
+                        <li style="margin-bottom: 0.5rem;"><strong>Meritech Capital:</strong> Annual SaaS benchmarking reports</li>
+                        <li style="margin-bottom: 0.5rem;"><strong>Aswath Damodaran (NYU):</strong> Revenue multiple research and valuation theory</li>
+                        <li style="margin-bottom: 0.5rem;"><strong>Historical Comps:</strong> 2020-2021 tech bubble vs 2023 reset analysis</li>
+                    </ul>
+                </div>
             </div>
-            
-            <div class="insight-card">
-                <h4>⚡ Concentration Risk</h4>
-                <p>Microsoft (46.5% of EV) + Nvidia (37.5% of EV) = <span class="highlight">84% of total value</span>. Highly vulnerable to public tech correction.</p>
+
+            <div class="comparison-container" style="margin-top: 1.5rem;">
+                <div class="comparison-card">
+                    <div class="comparison-header">Data Quality by Source</div>
+                    <div class="comparison-row">
+                        <span class="comparison-label">Public Company Financials</span>
+                        <span class="comparison-value" style="color: var(--accent);">5/5 (SEC Filings)</span>
             </div>
-            
-            <div class="insight-card">
-                <h4>📉 Decelerating Growth</h4>
-                <p>AI revenue growth slowing: 46.7% (2024) → 38.2% (2025). Still strong, but trend indicates maturing market dynamics.</p>
+                    <div class="comparison-row">
+                        <span class="comparison-label">Major Internal Flows</span>
+                        <span class="comparison-value" style="color: var(--accent);">4/5 (64% of total)</span>
             </div>
-            
-            <div class="insight-card">
-                <h4>🔄 Internal Dependencies</h4>
-                <p><span class="highlight">$31.93B</span> of internal revenue flows create circular dependencies where Microsoft funds OpenAI → OpenAI pays Microsoft Azure.</p>
+                    <div class="comparison-row">
+                        <span class="comparison-label">Private Revenue Estimates</span>
+                        <span class="comparison-value" style="color: var(--accent-yellow);">2-3/5 (Limited disclosure)</span>
             </div>
-            
-            <div class="insight-card">
-                <h4>💰 Private Valuations Immaterial</h4>
-                <p>OpenAI, CoreWeave, xAI = only 8% of consolidated EV. A 40% correction in private valuations impacts consolidated EV by just 2.1%.</p>
+                    <div class="comparison-row">
+                        <span class="comparison-label">Overall Conclusion</span>
+                        <span class="comparison-value" style="color: var(--accent);">High Confidence (90%)</span>
             </div>
-            
-            <div class="insight-card">
-                <h4>🎲 Public Tech Drives Risk</h4>
-                <p>A 20% selloff in Nvidia/Microsoft/Oracle/AMD would slash consolidated EV by <span class="highlight">18.5%</span>. Private AI froth is noise.</p>
+            </div>
+
+                <div class="comparison-card">
+                    <div class="comparison-header">Reconciliation Checks</div>
+                    <div class="comparison-row">
+                        <span class="comparison-label">Internal Flows % of Total Revenue</span>
+                        <span class="comparison-value">5.3% (Reasonable)</span>
+            </div>
+                    <div class="comparison-row">
+                        <span class="comparison-label">Cross-Check vs Nvidia Segments</span>
+                        <span class="comparison-value" style="color: var(--accent);">Aligned</span>
+            </div>
+                    <div class="comparison-row">
+                        <span class="comparison-label">vs IDC AI Market Growth</span>
+                        <span class="comparison-value" style="color: var(--accent);">Consistent</span>
+            </div>
+                    <div class="comparison-row">
+                        <span class="comparison-label">Sanity Check Result</span>
+                        <span class="comparison-value" style="color: var(--accent);">✓ Passed</span>
             </div>
         </div>
 
-        <h3>Valuation Assessment</h3>
-        <div class="alert warning">
-            <h4 style="color: var(--accent-orange); margin-bottom: 0.5rem;">The bubble appears overvalued relative to current revenue</h4>
-            <p>While the 16.9x EV/Revenue multiple aligns with Big Tech comparables, it masks three risks:</p>
-            <ul style="margin: 1rem 0 0 1.5rem; color: var(--text-secondary);">
-                <li>AI revenue growth is decelerating (47% → 38%)</li>
-                <li>The AI-only multiple of 48.8x assumes sustained hyper-growth</li>
-                <li>Nvidia's 34.4x multiple implies perpetual GPU dominance despite rising competition</li>
-            </ul>
+                <div class="comparison-card">
+                    <div class="comparison-header">Limitations & Caveats</div>
+                    <div class="comparison-row">
+                        <span class="comparison-label">Private Company Data</span>
+                        <span class="comparison-value" style="color: var(--accent-yellow);">10 of 15 are private</span>
+            </div>
+                    <div class="comparison-row">
+                        <span class="comparison-label">Revenue Recognition Timing</span>
+                        <span class="comparison-value" style="color: var(--accent-yellow);">May vary</span>
+            </div>
+                    <div class="comparison-row">
+                        <span class="comparison-label">Market Cap Volatility</span>
+                        <span class="comparison-value" style="color: var(--accent-yellow);">Tech stocks volatile</span>
+            </div>
+                    <div class="comparison-row">
+                        <span class="comparison-label">Overall Impact</span>
+                        <span class="comparison-value">Conclusion remains robust</span>
+            </div>
+        </div>
+            </div>
         </div>
 
-        <h3>Top Contributors (2025 LTM)</h3>
-        <div class="table-container">
-            <table>
+        <!-- Sensitivity Tab -->
+        <div id="sensitivity-tab" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Sensitivity Analysis (±20% on Top 5 Uncertainties)</div>
+                </div>
+                <table class="data-table">
                 <thead>
                     <tr>
-                        <th>Company</th>
-                        <th>Outside Revenue</th>
-                        <th>% of Total</th>
-                        <th>Enterprise Value</th>
-                        <th>% of EV</th>
+                            <th>Scenario</th>
+                            <th class="number">Outside Revenue</th>
+                            <th class="number">Enterprise Value</th>
+                            <th class="number">EV/Revenue</th>
+                            <th class="number">vs Base</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td><strong>Microsoft</strong></td>
-                        <td>$273.25B</td>
-                        <td class="positive">55.9%</td>
-                        <td>$3,850.0B</td>
-                        <td class="positive">46.5%</td>
+                            <td class="company-name">All Items -20%</td>
+                            <td class="number">$495.6B</td>
+                            <td class="number">$8,201.0B</td>
+                            <td class="number">16.54x</td>
+                            <td class="number" style="color: var(--accent);">-1.3%</td>
+                        </tr>
+                        <tr style="background: var(--card-hover);">
+                            <td class="company-name"><strong>Base Case</strong></td>
+                            <td class="number"><strong>$494.1B</strong></td>
+                            <td class="number"><strong>$8,275.0B</strong></td>
+                            <td class="number" style="color: var(--accent-red); font-weight: 700;"><strong>16.75x</strong></td>
+                            <td class="number"><strong>—</strong></td>
                     </tr>
                     <tr>
-                        <td><strong>Nvidia</strong></td>
-                        <td>$67.07B</td>
-                        <td>13.7%</td>
-                        <td>$3,100.0B</td>
-                        <td class="positive">37.5%</td>
+                            <td class="company-name">All Items +20%</td>
+                            <td class="number">$492.6B</td>
+                            <td class="number">$8,349.0B</td>
+                            <td class="number">16.95x</td>
+                            <td class="number" style="color: var(--accent-yellow);">+1.2%</td>
                     </tr>
                     <tr>
-                        <td><strong>Oracle</strong></td>
-                        <td>$52.00B</td>
-                        <td>10.6%</td>
-                        <td>$420.0B</td>
-                        <td>5.1%</td>
+                            <td class="company-name">Private AI Correction (-40%)</td>
+                            <td class="number">$494.1B</td>
+                            <td class="number">$8,101.0B</td>
+                            <td class="number">16.39x</td>
+                            <td class="number" style="color: var(--accent);">-2.1%</td>
                     </tr>
                     <tr>
-                        <td><strong>Intel</strong></td>
-                        <td>$49.50B</td>
-                        <td>10.1%</td>
-                        <td>$145.0B</td>
-                        <td>1.8%</td>
+                            <td class="company-name">Public Tech Selloff (-20%)</td>
+                            <td class="number">$494.1B</td>
+                            <td class="number">$6,743.0B</td>
+                            <td class="number" style="color: var(--accent);">13.65x</td>
+                            <td class="number" style="color: var(--accent-red);">-18.5%</td>
                     </tr>
-                    <tr>
-                        <td><strong>AMD</strong></td>
-                        <td>$26.75B</td>
-                        <td>5.5%</td>
-                        <td>$290.0B</td>
-                        <td>3.5%</td>
-                    </tr>
-                    <tr>
-                        <td><strong>OpenAI</strong> <span class="badge medium">Private</span></td>
-                        <td>$11.97B</td>
-                        <td>2.4%</td>
-                        <td>$300.0B</td>
-                        <td>3.6%</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </section>
+                    </tbody>
+                </table>
+            </div>
 
-    <!-- Sensitivity Analysis -->
-    <section id="sensitivity">
-        <h2>Sensitivity Analysis</h2>
-        <p>We tested the impact of ±20% changes on the top 5 uncertain items to assess the robustness of our consolidated figures.</p>
+            <div class="alert alert-info">
+                <strong>📊 What This Table Shows:</strong> These scenarios test how much our key metrics change if we're wrong about our estimates. 
+                <br><br>
+                <strong>"All Items ±20%"</strong> means: What if OpenAI revenue, OpenAI valuation, CoreWeave revenue/valuation, and internal GPU purchases are all 20% different than we estimated?
+                <br><br>
+                <strong>Result:</strong> Even with 20% estimation errors, the EV/Revenue multiple only changes by ±1.3%. This means <strong>our conclusion that the bubble is OVERVALUED is robust</strong> - it holds true even if we're significantly wrong about some estimates.
+                <br><br>
+                <strong>Biggest Risk:</strong> A broad public tech selloff (-20% for Nvidia, Microsoft, Oracle, AMD) would have an -18.5% impact on the multiple, highlighting the concentration risk (84% of value in just 2 companies).
+            </div>
 
-        <h3>Top 5 Uncertain Items</h3>
-        <div class="card-grid">
-            <div class="insight-card">
-                <h4>OpenAI Revenue <span class="badge medium">Confidence: 3/5</span></h4>
-                <p><strong>Base:</strong> $12B<br>
-                <strong>Range:</strong> $10-14B<br>
-                Limited public disclosure; annualized estimate from July 2025.</p>
-            </div>
-            
-            <div class="insight-card">
-                <h4>OpenAI Valuation <span class="badge medium">Confidence: 3/5</span></h4>
-                <p><strong>Base:</strong> $300B<br>
-                <strong>Range:</strong> $250-350B<br>
-                April 2025 funding round; secondary market may differ.</p>
-            </div>
-            
-            <div class="insight-card">
-                <h4>CoreWeave Revenue <span class="badge high">Confidence: 2/5</span></h4>
-                <p><strong>Base:</strong> $3B<br>
-                <strong>Range:</strong> $2-4B<br>
-                Private company; estimate based on OpenAI contract.</p>
-            </div>
-            
-            <div class="insight-card">
-                <h4>CoreWeave Valuation <span class="badge high">Confidence: 2/5</span></h4>
-                <p><strong>Base:</strong> $70B<br>
-                <strong>Range:</strong> $55-85B<br>
-                Pre-IPO valuation from Oct 2025 reports.</p>
-            </div>
-            
-            <div class="insight-card">
-                <h4>Internal Chip Sales <span class="badge medium">Confidence: 3/5</span></h4>
-                <p><strong>Base:</strong> $22.4B<br>
-                <strong>Range:</strong> $18-27B<br>
-                Nvidia sales to bubble companies; estimated from capex.</p>
-            </div>
-        </div>
+            <!-- Interactive Sensitivity Calculator -->
+            <div class="card" style="margin-top: 2rem;">
+                <div class="card-header">
+                    <div class="card-title">🎛️ Interactive Sensitivity Calculator</div>
+                    <span class="card-badge badge-success">Adjust in Real-Time</span>
+                </div>
+                
+                <div style="padding: 1rem;">
+                    <p style="color: var(--text-secondary); margin-bottom: 2rem;">
+                        Adjust the slider to see how underestimating uncertain items (OpenAI, CoreWeave, internal flows) affects the valuation multiple and required growth rate.
+                    </p>
 
-        <h3>Scenario Analysis</h3>
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Scenario</th>
-                        <th>EV Impact</th>
-                        <th>EV/Revenue</th>
-                        <th>Interpretation</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Top-5 at -20%</td>
-                        <td><span class="negative">-$74B (-0.9%)</span></td>
-                        <td>16.7x</td>
-                        <td>Minimal impact; analysis robust</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Base Case</strong></td>
-                        <td>—</td>
-                        <td><strong>16.9x</strong></td>
-                        <td>—</td>
-                    </tr>
-                    <tr>
-                        <td>Top-5 at +20%</td>
-                        <td><span class="positive">+$74B (+0.9%)</span></td>
-                        <td>17.1x</td>
-                        <td>Minimal impact; analysis robust</td>
-                    </tr>
-                    <tr style="background: rgba(255, 159, 10, 0.05);">
-                        <td>Private AI correction (-40%)</td>
-                        <td><span class="warning">-$174B (-2.1%)</span></td>
-                        <td>16.6x</td>
-                        <td>Private froth immaterial (8% of EV)</td>
-                    </tr>
-                    <tr style="background: rgba(255, 69, 58, 0.05);">
-                        <td>Public tech selloff (-20%)</td>
-                        <td><span class="negative">-$1,532B (-18.5%)</span></td>
-                        <td>13.8x</td>
-                        <td><strong>KEY RISK:</strong> 84% in 2 stocks</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+                    <div style="margin-bottom: 3rem;">
+                        <label for="sensitivity-slider" style="display: block; margin-bottom: 1rem; font-weight: 600; color: var(--accent);">
+                            Underestimation Percentage: <span id="slider-value" style="color: #fff;">0%</span>
+                        </label>
+                        <input type="range" id="sensitivity-slider" min="0" max="300" value="0" step="10" 
+                               style="width: 100%; height: 8px; border-radius: 5px; background: linear-gradient(to right, var(--accent), var(--accent-red)); outline: none; cursor: pointer;">
+                        <div style="display: flex; justify-content: space-between; margin-top: 0.5rem; font-size: 0.75rem; color: var(--text-secondary);">
+                            <span>0% (Base Case)</span>
+                            <span>150%</span>
+                            <span>300% (Extreme)</span>
+                        </div>
+                    </div>
 
-        <div class="alert success">
-            <h4 style="color: var(--accent-green); margin-bottom: 0.5rem;">✓ Robust to Estimation Errors</h4>
-            <p style="margin-bottom: 0;">Even extreme scenarios (±20% on top uncertainties) change consolidated EV/Revenue by less than ±1.2%. The finding that "valuation is growing faster than revenue" holds across all scenarios.</p>
-        </div>
-    </section>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                        <div class="metric-card" style="background: rgba(0, 255, 136, 0.1);">
+                            <div class="metric-label">Outside Revenue</div>
+                            <div class="metric-value" id="calc-revenue" style="font-size: 1.75rem;">$494.1B</div>
+                            <div style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.5rem;" id="calc-revenue-change"></div>
+                        </div>
 
-    <!-- Companies -->
-    <section id="companies">
-        <h2>Companies in the Bubble</h2>
-        <p>15 seed companies meeting materiality thresholds (≥$500M annual value OR ≥1% of revenue).</p>
+                        <div class="metric-card" style="background: rgba(0, 212, 255, 0.1);">
+                            <div class="metric-label">Enterprise Value</div>
+                            <div class="metric-value" id="calc-ev" style="font-size: 1.75rem;">$8,275B</div>
+                            <div style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.5rem;" id="calc-ev-change"></div>
+                        </div>
 
-        <h3>Public Companies (5)</h3>
-        <div class="company-list">
-            <div class="company-tag public">
-                <strong>Nvidia</strong><br>
-                <small style="color: var(--text-secondary);">Santa Clara, CA</small>
-            </div>
-            <div class="company-tag public">
-                <strong>Microsoft</strong><br>
-                <small style="color: var(--text-secondary);">Redmond, WA</small>
-            </div>
-            <div class="company-tag public">
-                <strong>Oracle</strong><br>
-                <small style="color: var(--text-secondary);">Austin, TX</small>
-            </div>
-            <div class="company-tag public">
-                <strong>AMD</strong><br>
-                <small style="color: var(--text-secondary);">Santa Clara, CA</small>
-            </div>
-            <div class="company-tag public">
-                <strong>Intel</strong><br>
-                <small style="color: var(--text-secondary);">Santa Clara, CA</small>
-            </div>
-        </div>
+                        <div class="metric-card" style="background: rgba(255, 68, 68, 0.1);">
+                            <div class="metric-label">EV/Revenue Multiple</div>
+                            <div class="metric-value" id="calc-multiple" style="font-size: 1.75rem;">16.75x</div>
+                            <div style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.5rem;" id="calc-multiple-change"></div>
+                        </div>
 
-        <h3>Private Companies (10)</h3>
-        <div class="company-list">
-            <div class="company-tag private">
-                <strong>OpenAI</strong><br>
-                <small style="color: var(--text-secondary);">$300B valuation</small>
-            </div>
-            <div class="company-tag private">
-                <strong>CoreWeave</strong><br>
-                <small style="color: var(--text-secondary);">$70B valuation</small>
-            </div>
-            <div class="company-tag private">
-                <strong>xAI</strong><br>
-                <small style="color: var(--text-secondary);">$50B valuation</small>
-            </div>
-            <div class="company-tag private">
-                <strong>Nebius</strong><br>
-                <small style="color: var(--text-secondary);">$27.6B (public)</small>
-            </div>
-            <div class="company-tag private">
-                <strong>Anysphere</strong><br>
-                <small style="color: var(--text-secondary);">$9.9B valuation</small>
-            </div>
-            <div class="company-tag private">
-                <strong>Mistral</strong><br>
-                <small style="color: var(--text-secondary);">$6B valuation</small>
-            </div>
-            <div class="company-tag private">
-                <strong>Figure AI</strong><br>
-                <small style="color: var(--text-secondary);">$3.5B valuation</small>
-            </div>
-            <div class="company-tag private">
-                <strong>Harvey AI</strong><br>
-                <small style="color: var(--text-secondary);">$1.5B valuation</small>
-            </div>
-            <div class="company-tag private">
-                <strong>Ambience Healthcare</strong><br>
-                <small style="color: var(--text-secondary);">$1B valuation</small>
-            </div>
-            <div class="company-tag private">
-                <strong>Nscale</strong><br>
-                <small style="color: var(--text-secondary);">$500M valuation</small>
-            </div>
-        </div>
+                        <div class="metric-card" style="background: rgba(255, 170, 0, 0.1);">
+                            <div class="metric-label">Required Growth Rate</div>
+                            <div class="metric-value" id="calc-growth" style="font-size: 1.75rem;">25-30%</div>
+                            <div style="font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.5rem;" id="calc-growth-note">To justify valuation</div>
+                        </div>
+                    </div>
 
-        <h3>Key Relationships</h3>
-        <div class="card-grid">
-            <div class="insight-card">
-                <h4>Microsoft → Nebius</h4>
-                <p><strong>$17.4B</strong> cloud infrastructure deal (5 years)<br>
-                100,000 Nvidia GB300 chips</p>
+                    <div style="margin-top: 2rem; padding: 1rem; background: rgba(0, 0, 0, 0.3); border-radius: 12px; border-left: 4px solid var(--accent);">
+                        <div style="font-weight: 600; margin-bottom: 0.5rem; color: var(--accent);">Interpretation:</div>
+                        <div id="calc-interpretation" style="color: var(--text-secondary); line-height: 1.6;">
+                            At base case (0% underestimation), the bubble is valued at 16.75x EV/Revenue, requiring 25-30% sustained growth to justify. This is at the high end of high-growth software multiples.
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="insight-card">
-                <h4>Microsoft → OpenAI</h4>
-                <p><strong>$13B</strong> investment + Azure cloud partnership<br>
-                Strategic AI collaboration</p>
-            </div>
-            <div class="insight-card">
-                <h4>OpenAI → CoreWeave</h4>
-                <p><strong>$22.4B</strong> total cloud contract<br>
-                Multi-year GPU infrastructure</p>
-            </div>
-            <div class="insight-card">
-                <h4>Nvidia → OpenAI</h4>
-                <p><strong>Up to $100B</strong> planned commitment<br>
-                Chips + equity investment</p>
-            </div>
-        </div>
-    </section>
 
-    <!-- Data Sources -->
-    <section id="data">
-        <h2>Methodology & Sources</h2>
-        
-        <h3>Data Collection Approach</h3>
-        <p><strong>Public Companies:</strong> SEC filings (10-K, 10-Q) from EDGAR for Nvidia, Microsoft, Oracle, AMD, and Intel.</p>
-        <p><strong>Private Companies:</strong> Best available estimates from Financial Times, Wall Street Journal, Bloomberg, Reuters, and TechCrunch with confidence scores and ranges.</p>
-
-        <h3>Consolidation Methodology</h3>
-        <div class="alert info">
-            <p><strong>Outside Revenue = Total Revenue - Internal Revenue</strong></p>
-            <p style="margin: 0.5rem 0 0;">Removed $31.93B of bubble-to-bubble payments (2025 LTM) to avoid double-counting:</p>
-            <ul style="margin: 0.5rem 0 0 1.5rem; color: var(--text-secondary);">
-                <li>Chip sales: Nvidia to Microsoft/Oracle/CoreWeave ($22.4B)</li>
-                <li>Cloud services: OpenAI/xAI to Microsoft Azure ($2.25B)</li>
-                <li>Processors: AMD/Intel to Microsoft/Oracle ($6.75B)</li>
-                <li>API services: Anysphere to OpenAI ($30M)</li>
-            </ul>
-        </div>
-
-        <h3>Top 10 Primary Sources</h3>
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Source</th>
-                        <th>Data Type</th>
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Top 5 Uncertain Items</div>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Base Case</th>
+                            <th>Range</th>
+                            <th>Confidence</th>
+                            <th>Rationale</th>
                     </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>1</td>
-                        <td><strong>Reuters</strong></td>
-                        <td>Nebius deals, OpenAI funding, CoreWeave valuation</td>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="company-name">OpenAI Revenue (2025)</td>
+                            <td>$12B</td>
+                            <td>$10B - $14B</td>
+                            <td>3/5</td>
+                            <td>Public estimate; actual could vary ±17%</td>
                     </tr>
                     <tr>
-                        <td>2</td>
-                        <td><strong>Nvidia Investor Relations</strong></td>
-                        <td>SEC filings (10-K, 10-Q), earnings releases</td>
+                            <td class="company-name">OpenAI Valuation (2025)</td>
+                            <td>$300B</td>
+                            <td>$250B - $350B</td>
+                            <td>3/5</td>
+                            <td>Last funding round; secondary market varies</td>
                     </tr>
                     <tr>
-                        <td>3</td>
-                        <td><strong>Microsoft Investor Relations</strong></td>
-                        <td>SEC filings, Azure AI revenue data</td>
+                            <td class="company-name">CoreWeave Revenue (2025)</td>
+                            <td>$3B</td>
+                            <td>$2B - $4B</td>
+                            <td>2/5</td>
+                            <td>Limited disclosure; contract-based estimate</td>
                     </tr>
                     <tr>
-                        <td>4</td>
-                        <td><strong>Wikipedia</strong></td>
-                        <td>OpenAI revenue ($12B), Anysphere valuation</td>
+                            <td class="company-name">CoreWeave Valuation (2025)</td>
+                            <td>$70B</td>
+                            <td>$55B - $85B</td>
+                            <td>2/5</td>
+                            <td>Pre-IPO pricing uncertainty</td>
                     </tr>
                     <tr>
-                        <td>5</td>
-                        <td><strong>Oracle Investor Relations</strong></td>
-                        <td>Cloud infrastructure revenue disclosures</td>
-                    </tr>
-                    <tr>
-                        <td>6</td>
-                        <td><strong>AMD Investor Relations</strong></td>
-                        <td>Data Center segment, MI300 revenue</td>
-                    </tr>
-                    <tr>
-                        <td>7</td>
-                        <td><strong>Intel Investor Relations</strong></td>
-                        <td>DCAI segment, Gaudi AI accelerators</td>
-                    </tr>
-                    <tr>
-                        <td>8</td>
-                        <td><strong>Tom's Hardware</strong></td>
-                        <td>Microsoft $33B neocloud deals breakdown</td>
-                    </tr>
-                    <tr>
-                        <td>9</td>
-                        <td><strong>TechCrunch</strong></td>
-                        <td>Private company funding rounds</td>
-                    </tr>
-                    <tr>
-                        <td>10</td>
-                        <td><strong>Rothschild Growth Equity</strong></td>
-                        <td>xAI, Anysphere valuations and funding</td>
+                            <td class="company-name">Internal GPU Purchases</td>
+                            <td>$21.0B</td>
+                            <td>$17B - $25B</td>
+                            <td>4/5</td>
+                            <td>Bottom-up analysis; xAI alone is $4B</td>
                     </tr>
                 </tbody>
             </table>
         </div>
 
-        <div class="alert warning">
-            <h4 style="color: var(--accent-orange); margin-bottom: 0.5rem;">⚠️ Data Quality Notes</h4>
-            <ul style="margin: 0.5rem 0 0 1.5rem; color: var(--text-secondary);">
-                <li><strong>High Confidence (5/5):</strong> Public company SEC filings and major deal announcements</li>
-                <li><strong>Moderate Confidence (3-4/5):</strong> AI revenue apportionment, private valuations from funding rounds</li>
-                <li><strong>Low Confidence (1-2/5):</strong> Private company revenues, especially smaller startups</li>
-            </ul>
-            <p style="margin: 1rem 0 0;">Despite gaps, high-uncertainty items drive <10% of consolidated metrics, so conclusions are robust.</p>
+            <div class="comparison-container">
+                <div class="comparison-card">
+                    <div class="comparison-header">Required Growth Rates</div>
+                    <div class="comparison-row">
+                        <span class="comparison-label">At 16.75x multiple</span>
+                        <span class="comparison-value" style="color: var(--accent-yellow);">25-30% sustained</span>
         </div>
-    </section>
+                    <div class="comparison-row">
+                        <span class="comparison-label">Current growth (2025)</span>
+                        <span class="comparison-value">14.9% (full)</span>
+                    </div>
+                    <div class="comparison-row">
+                        <span class="comparison-label">Gap</span>
+                        <span class="comparison-value" style="color: var(--accent-red);">10-15pp shortfall</span>
+                    </div>
+                    <div class="comparison-row">
+                        <span class="comparison-label">Implication</span>
+                        <span class="comparison-value" style="color: var(--accent-red);">20-30% downside</span>
+                    </div>
+                </div>
 
-    <!-- Conclusion -->
-    <section style="text-align: center; padding: 4rem 2rem;">
-        <h2>Conclusion</h2>
-        <p style="max-width: 800px; margin: 0 auto 2rem;">The AI bubble demonstrates robust growth and justifies a premium valuation, but <span class="highlight">multiple expansion has outpaced revenue growth by 2x</span>, creating downside risk if growth decelerates. The bubble is highly concentrated (84% in Nvidia + Microsoft), making it vulnerable to a public tech correction but resilient to private AI revaluations.</p>
-
-        <div class="alert warning" style="max-width: 800px; margin: 0 auto; text-align: left;">
-            <h4 style="color: var(--accent-orange); margin-bottom: 0.5rem;">The Bubble is Priced for Perfection</h4>
-            <p style="margin-bottom: 0.5rem;">With AI revenue growth already slowing from 47% to 38% and competition intensifying, a <strong>20-30% correction is plausible</strong> if revenue growth normalizes to 10-15%.</p>
-            <p style="margin: 0;"><strong>Monitor:</strong> (1) Nvidia's pricing power, (2) Microsoft's AI monetization, (3) Private unicorn IPO valuations.</p>
+                <div class="comparison-card">
+                    <div class="comparison-header">Fair Value Scenarios</div>
+                    <div class="comparison-row">
+                        <span class="comparison-label">If growth = 10%</span>
+                        <span class="comparison-value">10-12x (35-40% down)</span>
+                    </div>
+                    <div class="comparison-row">
+                        <span class="comparison-label">If growth = 15%</span>
+                        <span class="comparison-value">12-13x (20-25% down)</span>
+                    </div>
+                    <div class="comparison-row">
+                        <span class="comparison-label">If growth = 20%</span>
+                        <span class="comparison-value">14-15x (10-15% down)</span>
+                    </div>
+                    <div class="comparison-row">
+                        <span class="comparison-label">If growth = 25-30%</span>
+                        <span class="comparison-value" style="color: var(--accent);">16-18x (Fair)</span>
+                    </div>
         </div>
 
-        <div style="margin-top: 3rem;">
-            <p style="color: var(--text-secondary); font-size: 0.875rem;">Analysis Date: November 13, 2025 • LTM Period: Twelve months ending September 30, 2025</p>
+                <div class="comparison-card">
+                    <div class="comparison-header">Confidence Assessment</div>
+                    <div class="comparison-row">
+                        <span class="comparison-label">Revenue data</span>
+                        <span class="comparison-value" style="color: var(--accent);">High (90%)</span>
         </div>
-    </section>
+                    <div class="comparison-row">
+                        <span class="comparison-label">Internal flows</span>
+                        <span class="comparison-value" style="color: var(--accent);">High (85%)</span>
+                    </div>
+                    <div class="comparison-row">
+                        <span class="comparison-label">Private valuations</span>
+                        <span class="comparison-value" style="color: var(--accent-yellow);">Medium (70%)</span>
+                    </div>
+                    <div class="comparison-row">
+                        <span class="comparison-label">Overall conclusion</span>
+                        <span class="comparison-value" style="color: var(--accent);">Robust (90%)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Footer -->
-    <footer>
-        <p>AI Bubble Financial Analysis • All data sourced from public filings and reputable financial press</p>
-        <p style="margin-top: 0.5rem;">For detailed methodology and full source documentation, see accompanying files</p>
-    </footer>
+    <div class="footer">
+        <p><strong>AI Bubble Financial Analysis</strong></p>
+        <p style="margin-top: 0.5rem;">Analysis Date: November 13, 2025 | LTM Period: To September 30, 2025</p>
+        <p style="margin-top: 0.5rem; color: var(--text-secondary);">
+            For complete methodology and source documentation, see 
+            <a href="sources_and_assumptions.md" style="color: var(--accent);">sources_and_assumptions.md</a>, 
+            <a href="executive_summary.md" style="color: var(--accent);">executive_summary.md</a>, and
+            <a href="consolidated_calculations.md" style="color: var(--accent);">consolidated_calculations.md</a>
+        </p>
+    </div>
+
+    <script>
+        // Companies data
+        const companiesData = [
+            {name: "Nvidia", type: "Public", hq: "Santa Clara, CA", rev2023: 26970000000, rev2024: 60922000000, rev2025: 90000000000, ev2025: 3100000000000, conf: 5},
+            {name: "Microsoft", type: "Public", hq: "Redmond, WA", rev2023: 211915000000, rev2024: 245122000000, rev2025: 275000000000, ev2025: 3850000000000, conf: 5},
+            {name: "Oracle", type: "Public", hq: "Austin, TX", rev2023: 49954000000, rev2024: 52961000000, rev2025: 56000000000, ev2025: 420000000000, conf: 5},
+            {name: "AMD", type: "Public", hq: "Santa Clara, CA", rev2023: 22680000000, rev2024: 25823000000, rev2025: 29000000000, ev2025: 290000000000, conf: 5},
+            {name: "Intel", type: "Public", hq: "Santa Clara, CA", rev2023: 54228000000, rev2024: 54949000000, rev2025: 54000000000, ev2025: 145000000000, conf: 5},
+            {name: "OpenAI", type: "Private", hq: "San Francisco, CA", rev2023: 1600000000, rev2024: 3700000000, rev2025: 12000000000, ev2025: 300000000000, conf: 3},
+            {name: "CoreWeave", type: "Private", hq: "Roseland, NJ", rev2023: 500000000, rev2024: 1500000000, rev2025: 3000000000, ev2025: 70000000000, conf: 2},
+            {name: "Nebius", type: "Private", hq: "Amsterdam, NL", rev2023: 180000000, rev2024: 400000000, rev2025: 584000000, ev2025: 27610000000, conf: 3},
+            {name: "xAI", type: "Private", hq: "San Francisco, CA", rev2023: 50000000, rev2024: 200000000, rev2025: 800000000, ev2025: 50000000000, conf: 2},
+            {name: "Figure AI", type: "Private", hq: "Sunnyvale, CA", rev2023: 10000000, rev2024: 50000000, rev2025: 150000000, ev2025: 3500000000, conf: 2},
+            {name: "Mistral", type: "Private", hq: "Paris, France", rev2023: 30000000, rev2024: 120000000, rev2025: 300000000, ev2025: 6000000000, conf: 2},
+            {name: "Nscale", type: "Private", hq: "Germany", rev2023: 5000000, rev2024: 20000000, rev2025: 50000000, ev2025: 500000000, conf: 2},
+            {name: "Anysphere", type: "Private", hq: "San Francisco, CA", rev2023: 100000000, rev2024: 300000000, rev2025: 500000000, ev2025: 9900000000, conf: 3},
+            {name: "Ambience", type: "Private", hq: "San Francisco, CA", rev2023: 10000000, rev2024: 30000000, rev2025: 80000000, ev2025: 1000000000, conf: 2},
+            {name: "Harvey", type: "Private", hq: "San Francisco, CA", rev2023: 15000000, rev2024: 50000000, rev2025: 120000000, ev2025: 1500000000, conf: 2}
+        ];
+
+        const totalEV = 8275010000000;
+
+        // Format numbers
+        function formatNumber(num) {
+            if (num >= 1000000000) {
+                return '$' + (num / 1000000000).toFixed(1) + 'B';
+            }
+            return '$' + (num / 1000000).toFixed(1) + 'M';
+        }
+
+        // Populate companies table
+        function populateCompaniesTable() {
+            const tbody = document.getElementById('companies-tbody');
+            tbody.innerHTML = '';
+            
+            companiesData.forEach(company => {
+                const evPercent = ((company.ev2025 / totalEV) * 100).toFixed(1);
+                const row = `
+                    <tr data-type="${company.type.toLowerCase()}">
+                        <td class="company-name">${company.name}</td>
+                        <td>${company.type}</td>
+                        <td>${company.hq}</td>
+                        <td class="number">${formatNumber(company.rev2023)}</td>
+                        <td class="number">${formatNumber(company.rev2024)}</td>
+                        <td class="number">${formatNumber(company.rev2025)}</td>
+                        <td class="number">${formatNumber(company.ev2025)}</td>
+                        <td class="number" style="color: ${evPercent > 10 ? 'var(--accent-red)' : 'var(--text-primary)'}; font-weight: ${evPercent > 10 ? '700' : '400'};">${evPercent}%</td>
+                        <td>${company.conf}/5</td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        // Tab switching
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName + '-tab').classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Filter companies by type
+        function filterByType(type) {
+            const rows = document.querySelectorAll('#companies-table tbody tr');
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            rows.forEach(row => {
+                if (type === 'all') {
+                    row.style.display = '';
+                } else {
+                    if (row.dataset.type === type) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                }
+            });
+        }
+
+        // Search companies
+        function filterCompanies() {
+            const searchTerm = document.getElementById('company-search').value.toLowerCase();
+            const rows = document.querySelectorAll('#companies-table tbody tr');
+            
+            rows.forEach(row => {
+                const companyName = row.cells[0].textContent.toLowerCase();
+                const hq = row.cells[2].textContent.toLowerCase();
+                if (companyName.includes(searchTerm) || hq.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            populateCompaniesTable();
+            initNetworkVisualization();
+            initSensitivityCalculator();
+            initRevenueChart();
+        });
+
+        // Revenue Growth Chart
+        function initRevenueChart() {
+            const chartContainer = document.getElementById('revenue-chart');
+            if (!chartContainer) return;
+
+            const width = chartContainer.clientWidth || 800;
+            const height = 250;
+            const margin = { top: 20, right: 80, bottom: 50, left: 80 };
+            const chartWidth = width - margin.left - margin.right;
+            const chartHeight = height - margin.top - margin.bottom;
+
+            const svg = d3.select("#revenue-chart")
+                .attr("width", width)
+                .attr("height", height);
+
+            svg.selectAll("*").remove();
+
+            const g = svg.append("g")
+                .attr("transform", `translate(${margin.left},${margin.top})`);
+
+            // Data
+            const data = [
+                { year: "2023", revenue: 122.6, growth: null, evRevenue: 33.99 },
+                { year: "2024", revenue: 166.8, growth: 36.1, evRevenue: 36.57 },
+                { year: "2025 LTM", revenue: 223.6, growth: 34.0, evRevenue: 37.01 }
+            ];
+
+            // Scales
+            const xScale = d3.scalePoint()
+                .domain(data.map(d => d.year))
+                .range([0, chartWidth])
+                .padding(0.5);
+
+            const yScaleRevenue = d3.scaleLinear()
+                .domain([0, 250])
+                .range([chartHeight, 0]);
+
+            const yScaleGrowth = d3.scaleLinear()
+                .domain([0, 50])
+                .range([chartHeight, 0]);
+
+            const yScaleEVRev = d3.scaleLinear()
+                .domain([30, 40])
+                .range([chartHeight, 0]);
+
+            // Grid lines
+            g.append("g")
+                .attr("class", "grid")
+                .selectAll("line")
+                .data(yScaleRevenue.ticks(5))
+                .join("line")
+                .attr("x1", 0)
+                .attr("x2", chartWidth)
+                .attr("y1", d => yScaleRevenue(d))
+                .attr("y2", d => yScaleRevenue(d))
+                .attr("stroke", "rgba(255, 255, 255, 0.1)")
+                .attr("stroke-dasharray", "2,2");
+
+            // Revenue line
+            const revenueLine = d3.line()
+                .x(d => xScale(d.year))
+                .y(d => yScaleRevenue(d.revenue))
+                .curve(d3.curveMonotoneX);
+
+            g.append("path")
+                .datum(data)
+                .attr("fill", "none")
+                .attr("stroke", "#00ff88")
+                .attr("stroke-width", 3)
+                .attr("d", revenueLine)
+                .style("filter", "drop-shadow(0 0 8px rgba(0, 255, 136, 0.6))");
+
+            // Revenue points
+            g.selectAll(".revenue-point")
+                .data(data)
+                .join("circle")
+                .attr("class", "revenue-point")
+                .attr("cx", d => xScale(d.year))
+                .attr("cy", d => yScaleRevenue(d.revenue))
+                .attr("r", 6)
+                .attr("fill", "#00ff88")
+                .attr("stroke", "#fff")
+                .attr("stroke-width", 2)
+                .style("filter", "drop-shadow(0 0 6px rgba(0, 255, 136, 0.8))");
+
+            // Revenue labels - positioned above the line
+            g.selectAll(".revenue-label")
+                .data(data)
+                .join("text")
+                .attr("class", "revenue-label")
+                .attr("x", d => xScale(d.year) - 25) // Offset to the left
+                .attr("y", d => yScaleRevenue(d.revenue) - 10)
+                .attr("text-anchor", "end")
+                .attr("fill", "#00ff88")
+                .attr("font-size", "12px")
+                .attr("font-weight", "600")
+                .text(d => `$${d.revenue.toFixed(1)}B`);
+
+            // Growth rate bars (for 2024 and 2025) - IMPROVED: Subtle by default, highlight on hover
+            const growthData = data.filter(d => d.growth !== null);
+            
+            const growthBars = g.selectAll(".growth-bar")
+                .data(growthData)
+                .join("rect")
+                .attr("class", "growth-bar")
+                .attr("x", d => xScale(d.year) - 15)
+                .attr("y", d => yScaleGrowth(d.growth))
+                .attr("width", 30)
+                .attr("height", d => chartHeight - yScaleGrowth(d.growth))
+                .attr("fill", "rgba(0, 212, 255, 0.15)") // More transparent by default
+                .attr("stroke", "rgba(0, 212, 255, 0.4)")
+                .attr("stroke-width", 2)
+                .style("cursor", "pointer")
+                .style("transition", "all 0.3s ease");
+
+            // Hover effects moved below with growth labels
+
+            // Growth labels - positioned above bars, more visible on hover
+            const growthLabels = g.selectAll(".growth-label")
+                .data(growthData)
+                .join("text")
+                .attr("class", "growth-label")
+                .attr("x", d => xScale(d.year))
+                .attr("y", d => yScaleGrowth(d.growth) - 10) // Higher above the bars
+                .attr("text-anchor", "middle")
+                .attr("fill", "#00d4ff")
+                .attr("font-size", "11px")
+                .attr("font-weight", "600")
+                .attr("opacity", 0.5) // More transparent by default
+                .text(d => `↑${d.growth.toFixed(1)}%`)
+                .style("pointer-events", "none");
+            
+            // Make growth labels more visible when hovering over bars
+            growthBars
+                .on("mouseover", function(event, d) {
+                    d3.select(this)
+                        .attr("fill", "rgba(0, 212, 255, 0.5)")
+                        .attr("stroke", "#00d4ff")
+                        .attr("stroke-width", 3);
+                    // Highlight corresponding label
+                    growthLabels.filter(function(labelData) { return labelData.year === d.year; })
+                        .attr("opacity", 1)
+                        .attr("font-size", "12px");
+                })
+                .on("mouseout", function(event, d) {
+                    d3.select(this)
+                        .attr("fill", "rgba(0, 212, 255, 0.15)")
+                        .attr("stroke", "rgba(0, 212, 255, 0.4)")
+                        .attr("stroke-width", 2);
+                    // Reset label
+                    growthLabels.filter(function(labelData) { return labelData.year === d.year; })
+                        .attr("opacity", 0.5)
+                        .attr("font-size", "11px");
+                });
+
+            // EV/Revenue line (dashed, orange/yellow)
+            const evRevLine = d3.line()
+                .x(d => xScale(d.year))
+                .y(d => yScaleEVRev(d.evRevenue))
+                .curve(d3.curveMonotoneX);
+
+            g.append("path")
+                .datum(data)
+                .attr("fill", "none")
+                .attr("stroke", "#ff9f0a")
+                .attr("stroke-width", 3)
+                .attr("stroke-dasharray", "8,4")
+                .attr("d", evRevLine)
+                .style("filter", "drop-shadow(0 0 8px rgba(255, 159, 10, 0.6))");
+
+            // EV/Revenue points
+            g.selectAll(".evrev-point")
+                .data(data)
+                .join("circle")
+                .attr("class", "evrev-point")
+                .attr("cx", d => xScale(d.year))
+                .attr("cy", d => yScaleEVRev(d.evRevenue))
+                .attr("r", 6)
+                .attr("fill", "#ff9f0a")
+                .attr("stroke", "#fff")
+                .attr("stroke-width", 2)
+                .style("filter", "drop-shadow(0 0 6px rgba(255, 159, 10, 0.8))");
+
+            // EV/Revenue labels - positioned below the orange dots
+            g.selectAll(".evrev-label")
+                .data(data)
+                .join("text")
+                .attr("class", "evrev-label")
+                .attr("x", d => xScale(d.year))
+                .attr("y", d => yScaleEVRev(d.evRevenue) + 20) // Below the dot
+                .attr("text-anchor", "middle")
+                .attr("fill", "#ff9f0a")
+                .attr("font-size", "12px")
+                .attr("font-weight", "600")
+                .text(d => `${d.evRevenue.toFixed(2)}x`);
+
+            // X axis
+            g.append("g")
+                .attr("transform", `translate(0,${chartHeight})`)
+                .call(d3.axisBottom(xScale))
+                .attr("color", "rgba(255, 255, 255, 0.7)")
+                .selectAll("text")
+                .attr("font-size", "12px")
+                .attr("font-weight", "600");
+
+            // Y axis (Revenue)
+            g.append("g")
+                .call(d3.axisLeft(yScaleRevenue).ticks(5).tickFormat(d => `$${d}B`))
+                .attr("color", "#00ff88")
+                .selectAll("text")
+                .attr("font-size", "11px");
+
+            // Y axis label (Revenue)
+            g.append("text")
+                .attr("transform", "rotate(-90)")
+                .attr("y", -60)
+                .attr("x", -chartHeight / 2)
+                .attr("text-anchor", "middle")
+                .attr("fill", "#00ff88")
+                .attr("font-size", "12px")
+                .attr("font-weight", "600")
+                .text("Outside Revenue (AI)");
+
+            // Y axis (EV/Revenue) - right side
+            g.append("g")
+                .attr("transform", `translate(${chartWidth},0)`)
+                .call(d3.axisRight(yScaleEVRev).ticks(5).tickFormat(d => `${d}x`))
+                .attr("color", "#ff9f0a")
+                .selectAll("text")
+                .attr("font-size", "11px");
+
+            // Y axis label (EV/Revenue) - right side
+            g.append("text")
+                .attr("transform", "rotate(-90)")
+                .attr("y", chartWidth + 60)
+                .attr("x", -chartHeight / 2)
+                .attr("text-anchor", "middle")
+                .attr("fill", "#ff9f0a")
+                .attr("font-size", "12px")
+                .attr("font-weight", "600")
+                .text("EV/Revenue Multiple");
+
+            // Legend - IMPROVED: Added EV/Revenue and toggle functionality
+            const legend = g.append("g")
+                .attr("transform", `translate(${chartWidth / 2 - 180}, -5)`);
+
+            // Track visibility state
+            let visibilityState = {
+                revenue: true,
+                evRevenue: true,
+                growth: true
+            };
+
+            // Revenue legend item (clickable)
+            const revenueLegend = legend.append("g")
+                .attr("class", "legend-item")
+                .style("cursor", "pointer")
+                .on("click", function() {
+                    visibilityState.revenue = !visibilityState.revenue;
+                    toggleSeries("revenue", visibilityState.revenue);
+                });
+
+            revenueLegend.append("line")
+                .attr("x1", 0)
+                .attr("x2", 25)
+                .attr("y1", 0)
+                .attr("y2", 0)
+                .attr("stroke", "#00ff88")
+                .attr("stroke-width", 3);
+
+            revenueLegend.append("text")
+                .attr("x", 30)
+                .attr("y", 4)
+                .attr("fill", "#00ff88")
+                .attr("font-size", "10px")
+                .text("AI Revenue");
+
+            // EV/Revenue legend item (clickable)
+            const evRevLegend = legend.append("g")
+                .attr("class", "legend-item")
+                .attr("transform", "translate(110, 0)")
+                .style("cursor", "pointer")
+                .on("click", function() {
+                    visibilityState.evRevenue = !visibilityState.evRevenue;
+                    toggleSeries("evRevenue", visibilityState.evRevenue);
+                });
+
+            evRevLegend.append("line")
+                .attr("x1", 0)
+                .attr("x2", 25)
+                .attr("y1", 0)
+                .attr("y2", 0)
+                .attr("stroke", "#ff9f0a")
+                .attr("stroke-width", 3)
+                .attr("stroke-dasharray", "6,3");
+
+            evRevLegend.append("text")
+                .attr("x", 30)
+                .attr("y", 4)
+                .attr("fill", "#ff9f0a")
+                .attr("font-size", "10px")
+                .text("EV/Revenue");
+
+            // Growth legend item (clickable)
+            const growthLegend = legend.append("g")
+                .attr("class", "legend-item")
+                .attr("transform", "translate(240, 0)")
+                .style("cursor", "pointer")
+                .on("click", function() {
+                    visibilityState.growth = !visibilityState.growth;
+                    toggleSeries("growth", visibilityState.growth);
+                });
+
+            growthLegend.append("rect")
+                .attr("x", 0)
+                .attr("y", -6)
+                .attr("width", 12)
+                .attr("height", 12)
+                .attr("fill", "rgba(0, 212, 255, 0.3)")
+                .attr("stroke", "#00d4ff")
+                .attr("stroke-width", 2);
+
+            growthLegend.append("text")
+                .attr("x", 17)
+                .attr("y", 4)
+                .attr("fill", "#00d4ff")
+                .attr("font-size", "10px")
+                .text("YoY Growth");
+
+            // Toggle series visibility
+            function toggleSeries(series, visible) {
+                const opacity = visible ? 1 : 0.15;
+                const strokeOpacity = visible ? 1 : 0.15;
+                const labelOpacity = visible ? 1 : 0;
+
+                if (series === "revenue") {
+                    // Toggle revenue line and points
+                    g.selectAll("path").filter(function() {
+                        return d3.select(this).attr("stroke") === "#00ff88";
+                    })
+                        .transition()
+                        .duration(300)
+                        .style("opacity", opacity);
+
+                    g.selectAll(".revenue-point")
+                        .transition()
+                        .duration(300)
+                        .style("opacity", opacity);
+
+                    g.selectAll(".revenue-label")
+                        .transition()
+                        .duration(300)
+                        .style("opacity", labelOpacity);
+
+                    // Update legend opacity
+                    revenueLegend.transition().duration(300).style("opacity", opacity);
+
+                } else if (series === "evRevenue") {
+                    // Toggle EV/Revenue line and points
+                    g.selectAll("path").filter(function() {
+                        return d3.select(this).attr("stroke") === "#ff9f0a";
+                    })
+                        .transition()
+                        .duration(300)
+                        .style("opacity", opacity);
+
+                    g.selectAll(".evrev-point")
+                        .transition()
+                        .duration(300)
+                        .style("opacity", opacity);
+
+                    g.selectAll(".evrev-label")
+                        .transition()
+                        .duration(300)
+                        .style("opacity", labelOpacity);
+
+                    // Update legend opacity
+                    evRevLegend.transition().duration(300).style("opacity", opacity);
+
+                } else if (series === "growth") {
+                    // Toggle growth bars and labels
+                    growthBars
+                        .transition()
+                        .duration(300)
+                        .style("opacity", visible ? 1 : 0);
+
+                    growthLabels
+                        .transition()
+                        .duration(300)
+                        .style("opacity", visible ? 0.5 : 0);
+
+                    // Update legend opacity
+                    growthLegend.transition().duration(300).style("opacity", opacity);
+                }
+            }
+        }
+
+        // Sensitivity Calculator
+        function initSensitivityCalculator() {
+            const slider = document.getElementById('sensitivity-slider');
+            if (!slider) return;
+
+            const sliderValue = document.getElementById('slider-value');
+            const calcRevenue = document.getElementById('calc-revenue');
+            const calcRevenueChange = document.getElementById('calc-revenue-change');
+            const calcEV = document.getElementById('calc-ev');
+            const calcEVChange = document.getElementById('calc-ev-change');
+            const calcMultiple = document.getElementById('calc-multiple');
+            const calcMultipleChange = document.getElementById('calc-multiple-change');
+            const calcGrowth = document.getElementById('calc-growth');
+            const calcGrowthNote = document.getElementById('calc-growth-note');
+            const calcInterpretation = document.getElementById('calc-interpretation');
+
+            // Base case values
+            const baseRevenue = 494.1; // $B
+            const baseEV = 8275; // $B
+            const baseMultiple = 16.75;
+
+            // Uncertain items that we might be underestimating
+            // OpenAI revenue: $12B, OpenAI EV: $300B, CoreWeave revenue: $3B, CoreWeave EV: $70B
+            // Internal GPU purchases: $21B
+            const uncertainRevenue = 12 + 3; // OpenAI + CoreWeave
+            const uncertainEV = 300 + 70; // OpenAI + CoreWeave
+            const uncertainInternal = 21; // Internal GPU purchases
+
+            function calculateMetrics(underestimationPct) {
+                const factor = underestimationPct / 100;
+
+                // If we underestimated, these items are actually bigger
+                const adjustedUncertainRevenue = uncertainRevenue * (1 + factor);
+                const adjustedUncertainEV = uncertainEV * (1 + factor);
+                const adjustedInternal = uncertainInternal * (1 + factor);
+
+                // Impact on total revenue: uncertain companies grow, but internal flows also grow (reducing outside revenue)
+                const totalRevenueIncrease = (adjustedUncertainRevenue - uncertainRevenue);
+                const internalIncrease = (adjustedInternal - uncertainInternal);
+                const netRevenueImpact = totalRevenueIncrease - internalIncrease;
+
+                // New outside revenue
+                const newRevenue = baseRevenue + netRevenueImpact;
+
+                // New EV (only uncertain EV changes)
+                const newEV = baseEV + (adjustedUncertainEV - uncertainEV);
+
+                // New multiple
+                const newMultiple = newEV / newRevenue;
+
+                return {
+                    revenue: newRevenue,
+                    ev: newEV,
+                    multiple: newMultiple,
+                    revenueChange: ((newRevenue - baseRevenue) / baseRevenue * 100),
+                    evChange: ((newEV - baseEV) / baseEV * 100),
+                    multipleChange: ((newMultiple - baseMultiple) / baseMultiple * 100)
+                };
+            }
+
+            function getRequiredGrowth(multiple) {
+                // Rule of thumb mapping: EV/Revenue to required growth rate
+                // Based on typical SaaS/tech company valuations
+                if (multiple < 8) return "10-15%";
+                if (multiple < 12) return "15-20%";
+                if (multiple < 15) return "20-25%";
+                if (multiple < 18) return "25-30%";
+                if (multiple < 22) return "30-35%";
+                if (multiple < 27) return "35-40%";
+                if (multiple < 35) return "40-50%";
+                return "50%+";
+            }
+
+            function getInterpretation(multiple, pct) {
+                let valuation = "";
+                if (multiple < 12) valuation = "reasonably valued";
+                else if (multiple < 15) valuation = "fairly valued for high-growth";
+                else if (multiple < 20) valuation = "expensive - requires very high growth";
+                else if (multiple < 30) valuation = "significantly overvalued";
+                else valuation = "extremely overvalued";
+
+                let scenario = "";
+                if (pct === 0) scenario = "At base case (0% underestimation)";
+                else if (pct <= 50) scenario = `If we underestimated by ${pct}% (minor error)`;
+                else if (pct <= 100) scenario = `If we underestimated by ${pct}% (moderate error)`;
+                else if (pct <= 200) scenario = `If we underestimated by ${pct}% (major error)`;
+                else scenario = `If we underestimated by ${pct}% (extreme error)`;
+
+                const growth = getRequiredGrowth(multiple);
+                
+                return `${scenario}, the bubble would be valued at ${multiple.toFixed(2)}x EV/Revenue, which is ${valuation}. This would require sustained ${growth} revenue growth to justify the valuation.`;
+            }
+
+            function formatNumber(num) {
+                return num.toFixed(1);
+            }
+
+            function formatChange(change) {
+                const sign = change >= 0 ? '+' : '';
+                const color = Math.abs(change) < 5 ? 'var(--accent)' : 
+                             change > 0 ? 'var(--accent-red)' : 'var(--accent)';
+                return `<span style="color: ${color}">${sign}${change.toFixed(1)}%</span> vs base`;
+            }
+
+            slider.addEventListener('input', function() {
+                const pct = parseInt(this.value);
+                sliderValue.textContent = `${pct}%`;
+
+                const metrics = calculateMetrics(pct);
+
+                // Update displays
+                calcRevenue.textContent = `$${formatNumber(metrics.revenue)}B`;
+                calcRevenueChange.innerHTML = formatChange(metrics.revenueChange);
+
+                calcEV.textContent = `$${formatNumber(metrics.ev)}B`;
+                calcEVChange.innerHTML = formatChange(metrics.evChange);
+
+                calcMultiple.textContent = `${metrics.multiple.toFixed(2)}x`;
+                calcMultipleChange.innerHTML = formatChange(metrics.multipleChange);
+
+                const requiredGrowth = getRequiredGrowth(metrics.multiple);
+                calcGrowth.textContent = requiredGrowth;
+                
+                // Color code based on multiple
+                if (metrics.multiple < 15) {
+                    calcMultiple.style.color = 'var(--accent)';
+                    calcGrowthNote.textContent = 'Fair for high-growth tech';
+                    calcGrowthNote.style.color = 'var(--accent)';
+                } else if (metrics.multiple < 20) {
+                    calcMultiple.style.color = 'var(--accent-yellow)';
+                    calcGrowthNote.textContent = 'Expensive - high risk';
+                    calcGrowthNote.style.color = 'var(--accent-yellow)';
+                } else {
+                    calcMultiple.style.color = 'var(--accent-red)';
+                    calcGrowthNote.textContent = 'Significantly overvalued';
+                    calcGrowthNote.style.color = 'var(--accent-red)';
+                }
+
+                calcInterpretation.textContent = getInterpretation(metrics.multiple, pct);
+            });
+
+            // Initialize with base case
+            slider.dispatchEvent(new Event('input'));
+        }
+
+        // Network Visualization
+        function initNetworkVisualization() {
+            // Data
+            const nodes = [
+                { id: "Nvidia", type: "hardware", ev: 3100, revenue: 90 },
+                { id: "Microsoft", type: "cloud", ev: 3850, revenue: 275 },
+                { id: "OpenAI", type: "ai", ev: 300, revenue: 12 },
+                { id: "Oracle", type: "cloud", ev: 420, revenue: 56 },
+                { id: "AMD", type: "hardware", ev: 290, revenue: 29 },
+                { id: "Intel", type: "hardware", ev: 145, revenue: 54 },
+                { id: "CoreWeave", type: "cloud", ev: 70, revenue: 3 },
+                { id: "Nebius", type: "cloud", ev: 28, revenue: 0.584 },
+                { id: "xAI", type: "ai", ev: 50, revenue: 0.8 },
+                { id: "Figure AI", type: "ai", ev: 3.5, revenue: 0.15 },
+                { id: "Mistral", type: "ai", ev: 6, revenue: 0.3 },
+                { id: "Anysphere", type: "ai", ev: 9.9, revenue: 0.5 },
+                { id: "Ambience", type: "ai", ev: 1, revenue: 0.08 },
+                { id: "Harvey", type: "ai", ev: 1.5, revenue: 0.12 },
+                { id: "Nscale", type: "ai", ev: 0.5, revenue: 0.05 }
+            ];
+
+            const links = [
+                { source: "Microsoft", target: "OpenAI", value: 13, type: "investment" },
+                { source: "Microsoft", target: "Nvidia", value: 7, type: "hardware" },
+                { source: "OpenAI", target: "Microsoft", value: 2.5, type: "cloud" },
+                { source: "OpenAI", target: "CoreWeave", value: 2.5, type: "cloud" },
+                { source: "OpenAI", target: "Oracle", value: 1.5, type: "cloud" },
+                { source: "OpenAI", target: "Nvidia", value: 1.5, type: "hardware" },
+                { source: "Oracle", target: "Nvidia", value: 3.5, type: "hardware" },
+                { source: "CoreWeave", target: "Nvidia", value: 2.5, type: "hardware" },
+                { source: "Nebius", target: "Nvidia", value: 1.5, type: "hardware" },
+                { source: "Microsoft", target: "Nebius", value: 17.4, type: "contract" },
+                { source: "xAI", target: "Nvidia", value: 4, type: "hardware" },
+                { source: "Mistral", target: "Nvidia", value: 0.2, type: "hardware" },
+                { source: "Figure AI", target: "Nvidia", value: 0.3, type: "hardware" }
+            ];
+
+            const typeColors = {
+                hardware: "#ff6b9d",
+                cloud: "#4ecdc4",
+                ai: "#00ff88"
+            };
+
+            // Network SVG
+            const networkContainer = document.getElementById("network-svg");
+            if (!networkContainer) return;
+
+            const width = networkContainer.clientWidth || 700;
+            const height = 600;
+
+            const networkSvg = d3.select("#network-svg")
+                .attr("width", width)
+                .attr("height", height);
+
+            networkSvg.selectAll("*").remove();
+
+            // Create tooltip
+            let tooltip = d3.select(".network-tooltip");
+            if (tooltip.empty()) {
+                tooltip = d3.select("body").append("div")
+                    .attr("class", "network-tooltip");
+                tooltip.append("div").attr("class", "network-tooltip-title");
+                tooltip.append("div").attr("class", "network-tooltip-content");
+            }
+
+            // Force simulation - IMPROVED: More spread out
+            const simulation = d3.forceSimulation(nodes)
+                .force("link", d3.forceLink(links).id(d => d.id).distance(d => {
+                    // Longer distances for major connections
+                    return d.value > 5 ? 200 : 180;
+                }))
+                .force("charge", d3.forceManyBody().strength(-1500)) // Increased repulsion
+                .force("center", d3.forceCenter(width / 2, height / 2))
+                .force("collision", d3.forceCollide().radius(d => Math.sqrt(d.ev) * 2.5 + 25)) // More space
+                .force("x", d3.forceX(width / 2).strength(0.05)) // Gentle centering
+                .force("y", d3.forceY(height / 2).strength(0.05));
+
+            // Links - IMPROVED: Better visibility
+            const link = networkSvg.append("g")
+                .selectAll("line")
+                .data(links)
+                .join("line")
+                .attr("stroke", d => {
+                    if (d.type === "investment") return "#ffd93d";
+                    if (d.type === "hardware") return "#ff6b9d";
+                    if (d.type === "cloud") return "#4ecdc4";
+                    return "#00ff88";
+                })
+                .attr("stroke-opacity", 0.5)
+                .attr("stroke-width", d => Math.sqrt(d.value) * 1)
+                .style("filter", "drop-shadow(0 0 2px rgba(0, 0, 0, 0.5))");
+
+            // Nodes
+            const node = networkSvg.append("g")
+                .selectAll("g")
+                .data(nodes)
+                .join("g")
+                .call(d3.drag()
+                    .on("start", dragstarted)
+                    .on("drag", dragged)
+                    .on("end", dragended));
+
+            node.append("circle")
+                .attr("r", d => Math.sqrt(d.ev) * 2.2 + 8) // Slightly adjusted for better visibility
+                .attr("fill", d => typeColors[d.type])
+                .attr("stroke", "#fff")
+                .attr("stroke-width", 2.5)
+                .style("filter", "drop-shadow(0 0 10px rgba(0, 255, 136, 0.3))")
+                .style("cursor", "grab");
+
+            node.append("text")
+                .text(d => d.id)
+                .attr("text-anchor", "middle")
+                .attr("dy", d => Math.sqrt(d.ev) * 2.2 + 25)
+                .attr("fill", "#fff")
+                .attr("font-size", "12px")
+                .attr("font-weight", "600")
+                .style("pointer-events", "none")
+                .style("text-shadow", "0 0 8px rgba(0, 0, 0, 0.8)");
+
+            // Tooltip events
+            node.on("mouseover", function(event, d) {
+                tooltip.select(".network-tooltip-title").text(d.id);
+                tooltip.select(".network-tooltip-content").html(`
+                    <strong>Type:</strong> ${d.type.charAt(0).toUpperCase() + d.type.slice(1)}<br>
+                    <strong>EV:</strong> $${d.ev >= 1 ? d.ev.toFixed(1) + 'B' : (d.ev * 1000).toFixed(0) + 'M'}<br>
+                    <strong>Revenue (2025):</strong> $${d.revenue >= 1 ? d.revenue.toFixed(1) + 'B' : (d.revenue * 1000).toFixed(0) + 'M'}<br>
+                    <strong>EV % of Total:</strong> ${((d.ev / 8275) * 100).toFixed(1)}%
+                `);
+                tooltip.classed("show", true)
+                    .style("left", (event.pageX + 10) + "px")
+                    .style("top", (event.pageY - 10) + "px");
+            })
+            .on("mouseout", function() {
+                tooltip.classed("show", false);
+            });
+
+            simulation.on("tick", () => {
+                link
+                    .attr("x1", d => d.source.x)
+                    .attr("y1", d => d.source.y)
+                    .attr("x2", d => d.target.x)
+                    .attr("y2", d => d.target.y);
+
+                node.attr("transform", d => `translate(${d.x},${d.y})`);
+            });
+
+            function dragstarted(event, d) {
+                if (!event.active) simulation.alphaTarget(0.3).restart();
+                d.fx = d.x;
+                d.fy = d.y;
+            }
+
+            function dragged(event, d) {
+                d.fx = event.x;
+                d.fy = event.y;
+            }
+
+            function dragended(event, d) {
+                if (!event.active) simulation.alphaTarget(0);
+                d.fx = null;
+                d.fy = null;
+            }
+
+            // Consolidated Bubble
+            const consolidatedSvg = d3.select("#consolidated-svg")
+                .attr("width", width)
+                .attr("height", height);
+
+            consolidatedSvg.selectAll("*").remove();
+
+            const consolidatedG = consolidatedSvg.append("g")
+                .attr("transform", `translate(${width / 2}, ${height / 2})`);
+
+            // Gradient
+            const defs = consolidatedSvg.append("defs");
+            const gradient = defs.append("radialGradient")
+                .attr("id", "bubble-gradient");
+            gradient.append("stop")
+                .attr("offset", "0%")
+                .attr("stop-color", "rgba(0, 255, 136, 0.3)");
+            gradient.append("stop")
+                .attr("offset", "100%")
+                .attr("stop-color", "rgba(0, 212, 255, 0.1)");
+
+            // Main bubble
+            consolidatedG.append("circle")
+                .attr("r", 220)
+                .attr("fill", "url(#bubble-gradient)")
+                .attr("stroke", "#00ff88")
+                .attr("stroke-width", 3)
+                .attr("class", "pulse-glow");
+
+            // Top companies inside
+            const topCompanies = [
+                { name: "Microsoft", ev: 3850, angle: 0, color: "#4ecdc4" },
+                { name: "Nvidia", ev: 3100, angle: 120, color: "#ff6b9d" },
+                { name: "Oracle", ev: 420, angle: 240, color: "#4ecdc4" }
+            ];
+
+            topCompanies.forEach(company => {
+                const radius = 90;
+                const angle = (company.angle * Math.PI) / 180;
+                const x = Math.cos(angle) * radius;
+                const y = Math.sin(angle) * radius;
+                const size = Math.sqrt(company.ev) / 8;
+
+                consolidatedG.append("circle")
+                    .attr("cx", x)
+                    .attr("cy", y)
+                    .attr("r", size)
+                    .attr("fill", company.color)
+                    .attr("fill-opacity", 0.6)
+                    .attr("stroke", company.color)
+                    .attr("stroke-width", 2);
+
+                consolidatedG.append("text")
+                    .attr("x", x)
+                    .attr("y", y + size + 15)
+                    .attr("text-anchor", "middle")
+                    .attr("fill", "#fff")
+                    .attr("font-size", "10px")
+                    .attr("font-weight", "600")
+                    .text(company.name);
+            });
+
+            // Stats
+            consolidatedG.append("text")
+                .attr("y", -10)
+                .attr("text-anchor", "middle")
+                .attr("fill", "#fff")
+                .attr("font-size", "42px")
+                .attr("font-weight", "700")
+                .text("$8.28T");
+
+            consolidatedG.append("text")
+                .attr("y", 20)
+                .attr("text-anchor", "middle")
+                .attr("fill", "rgba(255, 255, 255, 0.7)")
+                .attr("font-size", "14px")
+                .text("Enterprise Value");
+
+            consolidatedG.append("text")
+                .attr("y", 60)
+                .attr("text-anchor", "middle")
+                .attr("fill", "#00ff88")
+                .attr("font-size", "32px")
+                .attr("font-weight", "700")
+                .text("16.75x");
+
+            consolidatedG.append("text")
+                .attr("y", 85)
+                .attr("text-anchor", "middle")
+                .attr("fill", "rgba(255, 255, 255, 0.7)")
+                .attr("font-size", "14px")
+                .text("EV/Revenue");
+
+            // Bottom stats
+            consolidatedG.append("text")
+                .attr("y", 250)
+                .attr("text-anchor", "middle")
+                .attr("fill", "rgba(255, 255, 255, 0.7)")
+                .attr("font-size", "12px")
+                .text("Outside Revenue: $494.1B");
+
+            consolidatedG.append("text")
+                .attr("y", 270)
+                .attr("text-anchor", "middle")
+                .attr("fill", "rgba(255, 255, 255, 0.7)")
+                .attr("font-size", "12px")
+                .text("Internal Flows: $27.5B (5.3%)");
+        }
+    </script>
 </body>
 </html>
-

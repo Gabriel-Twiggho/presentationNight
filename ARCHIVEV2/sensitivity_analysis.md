@@ -1,8 +1,4 @@
-# Sensitivity Analysis (CORRECTED v2.0)
-
-**⚠️ NOTE**: This analysis has been updated with corrected base case values reflecting $27.5B internal flows (vs $9.8B in v1.0).
-
----
+# Sensitivity Analysis
 
 ## Top 5 Uncertain Items
 
@@ -38,32 +34,27 @@
 - **Source**: Reuters Breakingviews (Oct 2025)
 - **Rationale**: Reported ~$70B valuation; pre-IPO pricing could vary ±21%
 
-### 5. Internal Revenue from GPU Sales (Nvidia to Bubble Companies) - **CORRECTED**
-- **Base Case**: $21.0B (GPU purchases only, part of $27.5B total internal)
-- **Low Estimate**: $17B
-- **High Estimate**: $25B
-- **Confidence**: 4/5 (improved from v1.0)
-- **Source**: xAI Colossus (100k GPUs), Microsoft/Oracle/CoreWeave capex disclosures
-- **Rationale**: Bottom-up analysis of each company's GPU procurement; xAI alone is $4B
+### 5. Internal Revenue from Chip Sales (Nvidia to Bubble Companies)
+- **Base Case**: $22.4B
+- **Low Estimate**: $18B
+- **High Estimate**: $27B
+- **Confidence**: 3/5
+- **Source**: Estimates based on capex disclosures and market intelligence
+- **Rationale**: Microsoft, Oracle, CoreWeave, Nebius purchases; actual split unclear
 
 ---
 
-## Impact on Consolidated Metrics (2025 LTM) - **CORRECTED**
-
-**Base Case (Corrected):**
-- Consolidated Outside Revenue (Full): $494.08B
-- Consolidated EV: $8,275.0B
-- EV/Revenue (Full): 16.75x
+## Impact on Consolidated Metrics (2025 LTM)
 
 ### Scenario A: All 5 Items at -20%
 
-| Metric | Base Case (v2.0) | Scenario A (-20%) | Change |
-|--------|------------------|-------------------|---------|
-| **Consolidated Outside Revenue (Full)** | $494.08B | $495.58B | +0.3% |
-| **Consolidated Outside Revenue (AI)** | $223.58B | $225.08B | +0.7% |
-| **Consolidated EV** | $8,275.0B | $8,201.0B | -0.9% |
-| **EV/Revenue (Full)** | 16.75x | 16.54x | -1.3% |
-| **EV/Revenue (AI)** | 37.01x | 36.44x | -1.5% |
+| Metric | Base Case | Scenario A (-20%) | Change |
+|--------|-----------|-------------------|---------|
+| **Consolidated Outside Revenue (Full)** | $488.65B | $487.25B | -0.3% |
+| **Consolidated Outside Revenue (AI)** | $169.67B | $168.27B | -0.8% |
+| **Consolidated EV** | $8,275.0B | $8,068.0B | -2.5% |
+| **EV/Revenue (Full)** | 16.9x | 16.6x | -1.8% |
+| **EV/Revenue (AI)** | 48.8x | 48.0x | -1.6% |
 
 **Calculations**:
 - OpenAI revenue: $12B → $10B (-$2B outside revenue)
@@ -108,46 +99,42 @@ Let me recalculate properly:
 
 ### Scenario B: All 5 Items at +20%
 
-| Metric | Base Case (v2.0) | Scenario B (+20%) | Change |
-|--------|------------------|-------------------|---------|
-| **Consolidated Outside Revenue (Full)** | $494.08B | $492.58B | -0.3% |
-| **Consolidated Outside Revenue (AI)** | $223.58B | $222.08B | -0.7% |
-| **Consolidated EV** | $8,275.0B | $8,349.0B | +0.9% |
-| **EV/Revenue (Full)** | 16.75x | 16.95x | +1.2% |
-| **EV/Revenue (AI)** | 37.01x | 37.59x | +1.6% |
+| Metric | Base Case | Scenario B (+20%) | Change |
+|--------|-----------|-------------------|---------|
+| **Consolidated Outside Revenue (Full)** | $488.65B | $487.15B | -0.3% |
+| **Consolidated Outside Revenue (AI)** | $169.67B | $171.07B | +0.8% |
+| **Consolidated EV** | $8,275.0B | $8,482.0B | +2.5% |
+| **EV/Revenue (Full)** | 16.9x | 17.4x | +3.0% |
+| **EV/Revenue (AI)** | 48.8x | 49.6x | +1.6% |
 
 **Revenue Impact (+20% on uncertain items)**:
 - OpenAI revenue: $12B → $14.4B = +$2.4B
 - CoreWeave revenue: $3B → $3.6B = +$0.6B
-- Internal GPU revenue: $21.0B → $25.2B = +$4.2B
+- Internal chip revenue: $22.4B → $26.9B
   - Higher internal means we remove MORE from total
-  - Effect: -$4.2B to outside revenue
-- Total revenue: $521.58B + $3.0B = $524.58B
-- Internal flows: $27.5B + $4.2B = $31.7B
-- Outside revenue: $524.58B - $31.7B = $492.88B (vs $494.08B base)
-- Net outside revenue impact: -$1.2B (-0.2%)
+  - Effect: -$4.5B to outside revenue
+- Total revenue: $520.58B + $3B = $523.58B
+- Internal: $31.93B + $4.5B = $36.43B
+- Outside: $523.58B - $36.43B = $487.15B
 
 **EV Impact (+20% on uncertain items)**:
 - OpenAI EV: $300B → $360B = +$60B
 - CoreWeave EV: $70B → $84B = +$14B
 - Total EV impact: +$74B
-
-**Revised Scenario B**:
-- Outside Revenue (Full): $494.08B → $492.58B (-$1.5B, -0.3%)
-- Consolidated EV: $8,275.0B → $8,349.0B (+$74B, +0.9%)
-- EV/Revenue: $8,349B / $492.58B = **16.95x** (vs 16.75x base)
+- Consolidated EV: $8,275.0B + $74B = $8,349.0B
+- EV/Revenue: $8,349B / $487.15B = 17.1x
 
 ---
 
-## Summary of Sensitivity (CORRECTED)
+## Summary of Sensitivity
 
 ### Impact on EV/Revenue Multiple (2025 LTM)
 
 | Scenario | Revenue Impact | EV Impact | EV/Revenue | vs Base |
 |----------|---------------|-----------|------------|---------|
-| **All Items -20%** | +$1.5B (+0.3%) | -$74B (-0.9%) | 16.54x | -1.3% |
-| **Base Case (v2.0)** | - | - | **16.75x** | - |
-| **All Items +20%** | -$1.5B (-0.3%) | +$74B (+0.9%) | 16.95x | +1.2% |
+| **All Items -20%** | +$1.5B (+0.3%) | -$74B (-0.9%) | 16.7x | -1.2% |
+| **Base Case** | - | - | 16.9x | - |
+| **All Items +20%** | -$1.5B (-0.3%) | +$74B (+0.9%) | 17.1x | +1.2% |
 
 ### Key Insights
 
@@ -159,15 +146,14 @@ Let me recalculate properly:
    - OpenAI ($300B) and CoreWeave ($70B) are material but small relative to Microsoft ($3,850B) and Nvidia ($3,100B)
    - Combined, these two companies represent only 4.5% of consolidated EV
 
-3. **EV/Revenue Multiple Stability**: The valuation multiple (EV/Revenue) varies by only ±1.3% under extreme scenarios, indicating:
+3. **EV/Revenue Multiple Stability**: The valuation multiple (EV/Revenue) varies by only ±1.2% under extreme scenarios, indicating:
    - The consolidated bubble valuation conclusion is robust to estimation uncertainty
    - The finding that "valuation is growing faster than revenue" holds across sensitivity scenarios
 
-4. **Valuation Growth vs Revenue Growth (CORRECTED)**: Even in the most conservative scenario (all items -20%):
-   - Revenue CAGR 2023-2025: ~16.3% per year
-   - EV CAGR 2023-2025: ~35.6% per year
-   - **Valuation is growing 2.2x faster than revenue** (finding persists across all scenarios)
-   - At 16.54x-16.95x, bubble is trading at premium to high-growth software (12-15x)
+4. **Valuation Growth vs Revenue Growth**: Even in the most conservative scenario (all items -20%):
+   - Revenue CAGR 2023-2025: ~17.3% per year
+   - EV CAGR 2023-2025: ~35.0% per year
+   - **Valuation is growing ~2x faster than revenue** (finding persists across all scenarios)
 
 ---
 
@@ -198,17 +184,7 @@ Let me recalculate properly:
 - AMD: $290B → $232B (-$58B)
 - Total EV impact: -$1,532B (-18.5%)
 - **Consolidated EV**: $8,275B → $6,743B
-- **EV/Revenue (Full)**: 16.75x → **13.65x** (-18.5%)
+- **EV/Revenue (Full)**: 16.9x → 13.8x (-18.3%)
 
 **Conclusion**: A broad public tech selloff would materially impact consolidated EV, as public companies represent 92% of consolidated EV. This highlights concentration risk in Nvidia and Microsoft (84% of consolidated EV).
-
-**Note**: At 13.65x after 20% correction, bubble would be closer to fair value for 15-20% growth rate.
-
----
-
-## Version History
-
-**v2.0 (Corrected)**: Updated base case to reflect $27.5B internal flows (was $9.8B in v1.0). All scenarios recalculated with corrected base. EV/Revenue: 14.04x → 16.75x.
-
-**v1.0 (DEPRECATED)**: Underestimated internal flows by $17.7B, leading to materially incorrect EV/Revenue multiple.
 

@@ -1,58 +1,53 @@
-# AI Bubble Financial Analysis - Final Results (CORRECTED v2.0)
+# AI Bubble Financial Analysis - Final Results
 
 **Analysis Date**: November 13, 2025  
 **LTM Period**: Twelve months ending September 30, 2025  
 **Bubble Definition**: 15 seed companies (Nvidia, OpenAI, Microsoft, Oracle, AMD, Intel, CoreWeave, Nebius, xAI, Figure AI, Mistral, Nscale, Anysphere, Ambience Healthcare, Harvey AI)
 
-**⚠️ NOTE**: This analysis has been corrected to properly account for internal GPU purchases. See [METHODOLOGY_CORRECTIONS.md](METHODOLOGY_CORRECTIONS.md) for full details.
-
 ---
 
-## Consolidated Financial Summary (CORRECTED)
+## Consolidated Financial Summary
 
 | Year | Consolidated Outside Revenue (USD) | Consolidated Enterprise Value (USD) | EV/Revenue | Revenue Growth YoY | EV Growth YoY |
 |------|-----------------------------------|-------------------------------------|------------|-------------------|---------------|
-| **2023 (FY)** | $364.11 billion | $4,167.1 billion | 11.44x | - | - |
-| **2024 (FY)** | $430.15 billion | $6,100.6 billion | 14.18x | 18.2% | 46.4% |
-| **2025 (LTM to Sep 30)** | $494.08 billion | $8,275.0 billion | 16.75x | 14.9% | 35.6% |
+| **2023 (FY)** | $354.95 billion | $4,166.1 billion | 11.7x | - | - |
+| **2024 (FY)** | $424.70 billion | $6,100.6 billion | 14.4x | 19.7% | 46.4% |
+| **2025 (LTM to Sep 30)** | $488.65 billion | $8,275.0 billion | 16.9x | 15.1% | 35.6% |
 
-### AI-Attributable Consolidation (CORRECTED)
+### AI-Attributable Consolidation
 
 | Year | AI-Attributable Outside Revenue (USD) | Consolidated Enterprise Value (USD) | EV/Revenue (AI) | Revenue Growth YoY | EV Growth YoY |
 |------|--------------------------------------|-------------------------------------|-----------------|-------------------|---------------|
-| **2023 (FY)** | $122.61 billion | $4,167.1 billion | 33.99x | - | - |
-| **2024 (FY)** | $166.82 billion | $6,100.6 billion | 36.57x | 36.1% | 46.4% |
-| **2025 (LTM to Sep 30)** | $223.58 billion | $8,275.0 billion | 37.01x | 34.0% | 35.6% |
+| **2023 (FY)** | $83.70 billion | $4,166.1 billion | 49.8x | - | - |
+| **2024 (FY)** | $122.80 billion | $6,100.6 billion | 49.7x | 46.7% | 46.4% |
+| **2025 (LTM to Sep 30)** | $169.67 billion | $8,275.0 billion | 48.8x | 38.2% | 35.6% |
 
 ---
 
-## Key Findings (CORRECTED)
+## Key Findings
 
-### 1. Valuation Growing MUCH Faster Than Revenue - **OVERVALUED**
+### 1. Valuation Growing Faster Than Revenue
 - **Enterprise value CAGR (2023-2025)**: 35.6% per year
-- **Revenue CAGR (2023-2025)**: 16.3% per year (full), 34.7% per year (AI-only)
-- **Conclusion**: **Valuation is growing 2.2x faster than revenue**, indicating aggressive multiple expansion
-- **Risk**: Requires 25-30% sustained growth to justify 16.75x multiple
+- **Revenue CAGR (2023-2025)**: 17.3% per year (full), 26.1% per year (AI-only)
+- **Conclusion**: **Valuation is growing ~2x faster than revenue**, indicating multiple expansion
 
-### 2. EV/Revenue Multiple Expansion - **CORRECTION: More Expensive Than Initially Calculated**
-- **2023**: 11.44x (full), 33.99x (AI-only)
-- **2025 LTM**: **16.75x** (full), 37.01x (AI-only)
-- **Multiple expanded 46%** on full-company basis
-- **Implication**: Trading near high-growth software multiples despite slowing growth
+### 2. EV/Revenue Multiple Expansion
+- **2023**: 11.7x (full), 49.8x (AI-only)
+- **2025 LTM**: 16.9x (full), 48.8x (AI-only)
+- **Multiple expanded 44%** on full-company basis while AI multiple remained stable
 
 ### 3. Concentration Risk
 - **Microsoft + Nvidia** = 84% of consolidated enterprise value
 - **Top 5 companies** = 94% of consolidated EV
 - **Public companies** = 92% of consolidated EV (private AI firms are 8%)
 
-### 4. Revenue Growth Decelerating While Multiples Expanding
-- **2023→2024**: 18.2% growth (full), 36.1% (AI)
-- **2024→2025**: 14.9% growth (full), 34.0% (AI)
-- **Problem**: Growth slowing while valuation multiple expanding
+### 4. AI Revenue Growth Decelerating
+- **2023→2024**: 46.7% growth
+- **2024→2025**: 38.2% growth
+- Still strong, but slowing from hyper-growth phase
 
-### 5. Internal Revenue Dependencies - **CORRECTED: 2.8x Higher Than Initially Estimated**
-- **$27.5B** of internal revenue removed (2025 LTM), up from $9.8B in v1.0
-- Represents 5.3% of total revenue (vs 1.9% initially estimated)
+### 5. Internal Revenue Dependencies
+- **$31.93B** of internal revenue removed (2025 LTM)
 - Primarily chip sales (Nvidia to Microsoft/Oracle/CoreWeave) and cloud services
 - Creates circular dependencies within the bubble
 

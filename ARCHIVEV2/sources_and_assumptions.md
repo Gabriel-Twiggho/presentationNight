@@ -1,16 +1,13 @@
-# Sources & Assumptions Documentation (CORRECTED v2.0)
-
-**⚠️ CORRECTION NOTICE**: This document has been updated to reflect corrected internal revenue flows of $27.5B (vs $9.8B in v1.0). See [METHODOLOGY_CORRECTIONS.md](METHODOLOGY_CORRECTIONS.md) for full details on what was corrected and why.
+# Sources & Assumptions Documentation
 
 ## Executive Summary
 
 This document provides full documentation of every numeric data point, estimation methodology, confidence score, and source URL used in the AI Bubble Financial Analysis.
 
-**Analysis Date**: November 13, 2025  
-**LTM Period**: Twelve months ending September 30, 2025  
-**Currency**: All figures in USD  
-**FX Rate**: 1.0 (all native figures already in USD)  
-**Version**: 2.0 (Corrected)
+**Analysis Date**: November 13, 2025
+**LTM Period**: Twelve months ending September 30, 2025
+**Currency**: All figures in USD
+**FX Rate**: 1.0 (all native figures already in USD)
 
 ---
 
@@ -820,12 +817,11 @@ All other companies (OpenAI, CoreWeave, Nebius, xAI, Figure AI, Mistral, Nscale,
 - **IDC AI Market Growth**: ~35% CAGR
 - **Conclusion**: Bubble growing slightly faster than market (share gains)
 
-### EV Growth vs. Revenue Growth - **CORRECTED**
+### EV Growth vs. Revenue Growth
 - **EV CAGR (2023-2025)**: 35.6% per year
-- **Revenue CAGR (2023-2025)**: 16.3% per year (full), 34.7% per year (AI-only)
-- **EV/Revenue Multiple (2025 LTM)**: **16.75x** (was 14.04x in v1.0)
-- **Conclusion**: Valuation growing 2.2x faster than revenue; aggressive multiple expansion
-- **Interpretation**: **OVERVALUED** unless 25-30% sustained growth achieved; 20-30% downside risk if growth stays below 20%
+- **Revenue CAGR (2023-2025)**: 17.3% per year (full), 26.1% per year (AI-only)
+- **Conclusion**: Valuation growing faster than revenue; multiple expansion
+- **Interpretation**: Market anticipates sustained high growth; risk if growth slows
 
 ---
 
@@ -863,18 +859,14 @@ All other companies (OpenAI, CoreWeave, Nebius, xAI, Figure AI, Mistral, Nscale,
 
 ---
 
-## Assumptions Log (CORRECTED v2.0)
+## Assumptions Log
 
 1. **LTM End Date**: September 30, 2025 chosen for public company alignment
 2. **Market Cap Date**: November 13, 2025 for consistency across all companies
-3. **Internal Revenue (CORRECTED)**: All inter-bubble transactions removed to avoid double-counting
-   - **v2.0**: $27.5B removed (bottom-up analysis of GPU purchases + cloud services)
-   - **v1.0 (WRONG)**: $9.8B removed (missed xAI $4B GPU purchase, underestimated Microsoft/Oracle/CoreWeave)
+3. **Internal Revenue**: All inter-bubble transactions removed to avoid double-counting
 4. **Multi-Year Contracts**: Treated as commitments; only recognized portions count as revenue
 5. **Private Valuations**: Last funding round valuation used; no secondary market adjustment
 6. **AI Revenue Apportionment**: Based on segment disclosure + management commentary; best available proxy
-7. **xAI GPU Estimate**: 100,000 H100 GPUs @ ~$40k each = $4B (confidence 4/5)
-8. **Internal Flow Methodology**: Bottom-up analysis of each company's GPU procurement and cloud consumption within bubble
 7. **Confidence Scores**: 5 = public filing, 4 = public disclosure, 3 = reputable estimate, 2 = extrapolation, 1 = limited data
 8. **Currency**: All USD; no FX conversion needed
 9. **Ownership**: Full EV included for all companies; no pro-rata consolidation in base case
